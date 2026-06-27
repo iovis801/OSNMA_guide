@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/withBase';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import ConstellationCrossAuth from '@/components/react/ConstellationCrossAuth.tsx';
 import Callout from '@/components/ui/Callout.astro';
@@ -60,7 +61,7 @@ import DocRef from '@/components/ui/DocRef.astro';
     <p>
       The fixed sequence of which tag slots are self- vs cross-authentication, and
       for which satellites, is governed by the
-      <a href="/structures/maclt">MAC look-up table</a>. The "S" and "E" markers in
+      <a href={withBase('/structures/maclt')}>MAC look-up table</a>. The "S" and "E" markers in
       those sequences are exactly self- and cross-authentication.
     </p>
   </Callout>

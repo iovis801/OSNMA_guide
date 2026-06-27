@@ -1,5 +1,6 @@
 ---
 import LevelToggle from './LevelToggle.astro';
+import { withBase } from '@/lib/withBase';
 ---
 <header
   class="sticky top-0 z-40 border-b border-line bg-base/80 backdrop-blur supports-[backdrop-filter]:bg-base/60"
@@ -18,7 +19,7 @@ import LevelToggle from './LevelToggle.astro';
       </svg>
     </button>
 
-    <a href="/" class="flex items-center gap-2.5">
+    <a href={withBase('/')} class="flex items-center gap-2.5">
       <span class="grid h-8 w-8 place-items-center rounded-lg bg-brand/15 text-brand-bright">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M12 2a10 10 0 1 0 10 10"></path>
@@ -33,9 +34,15 @@ import LevelToggle from './LevelToggle.astro';
     </a>
 
     <div class="ml-auto flex items-center gap-3">
+      <a
+        href="https://iovis.space/"
+        class="hidden text-sm text-muted hover:text-ink sm:inline"
+      >
+        ← iovis.space
+      </a>
       <LevelToggle />
       <a
-        href="/reference/sources"
+        href={withBase('/reference/sources')}
         class="hidden text-sm text-muted hover:text-ink sm:inline"
       >
         Sources

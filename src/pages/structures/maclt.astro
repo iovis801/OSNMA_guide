@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/withBase';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import ValueTable from '@/components/ui/ValueTable.astro';
 import Callout from '@/components/ui/Callout.astro';
@@ -21,7 +22,7 @@ import { MACLT_TABLE } from '@/data/tables';
     of data it covers. Rather than describe each slot on the air, OSNMA agrees the
     pattern in advance. The <strong>MACLT</strong> field in the DSM-KROOT selects
     one entry from the MAC look-up table, and that entry fixes the sequence of
-    <a href="/structures/mack">ADKD</a> types for every tag in the MACK
+    <a href={withBase('/structures/mack')}>ADKD</a> types for every tag in the MACK
     <DocRef doc="icd" section="4.2" />. The sequence stays constant for as long as a
     chain is in force.
   </p>

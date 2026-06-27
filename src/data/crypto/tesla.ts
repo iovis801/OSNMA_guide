@@ -60,7 +60,9 @@ export function deriveChain(
     const tow = tow0 + i * stepSec;
     keys[i] = { index: i, wn, tow, keyHex: bytesToHex(current) };
     if (i > 0) {
-      const gst = encodeGstSf(wn, tow);
+      // K_{i-1} = F(K_i ‖ GST_SF,i-1 ‖ α): per SIS ICD 6.4 the GST mixed in is that
+      // of the OUTPUT key's subframe (K_{i-1}), not the input key's.
+      const gst = encodeGstSf(wn, tow0 + (i - 1) * stepSec);
       current = hashChainStep(current, gst, alpha, lkBits, name);
     }
   }
@@ -89,8 +91,9 @@ export function verifyChainKey(
   let current = hexToBytes(received.keyHex);
   const iterations = received.index - trusted.index;
   for (let i = received.index; i > trusted.index; i--) {
-    const tow = received.tow - (received.index - i) * stepSec;
-    const gst = encodeGstSf(received.wn, tow);
+    // Deriving K_{i-1} from K_i mixes in the GST of the output key K_{i-1} (SIS ICD 6.4).
+    const outTow = received.tow - (received.index - (i - 1)) * stepSec;
+    const gst = encodeGstSf(received.wn, outTow);
     current = hashChainStep(current, gst, alpha, lkBits, name);
   }
   const derivedRootHex = bytesToHex(current);

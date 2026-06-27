@@ -2,6 +2,7 @@
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import AnimatedChainPreview from '@/components/react/AnimatedChainPreview.tsx';
 import { NAV } from '@/data/nav';
+import { withBase } from '@/lib/withBase';
 ---
 <BaseLayout title="What is OSNMA?" withSidebar={false}>
   <section class="relative overflow-hidden border-b border-line">
@@ -29,13 +30,13 @@ import { NAV } from '@/data/nav';
 
       <div class="mt-8 flex flex-wrap gap-3">
         <a
-          href="/foundations/spoofing"
+          href={withBase('/foundations/spoofing')}
           class="rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-bright"
         >
           Start from the beginning →
         </a>
         <a
-          href="/receiver/startup"
+          href={withBase('/receiver/startup')}
           class="rounded-lg border border-line bg-panel px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-brand"
         >
           Jump to: what a receiver does at start-up
@@ -63,7 +64,7 @@ import { NAV } from '@/data/nav';
               {section.items.map((item) => (
                 <li>
                   {item.ready ? (
-                    <a href={item.href} class="group flex items-baseline gap-1.5 text-sm text-ink hover:text-brand-bright">
+                    <a href={withBase(item.href)} class="group flex items-baseline gap-1.5 text-sm text-ink hover:text-brand-bright">
                       <span class="text-brand">›</span>
                       <span class="group-hover:underline">{item.title}</span>
                     </a>

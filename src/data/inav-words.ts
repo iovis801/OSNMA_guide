@@ -20,7 +20,7 @@ export const INAV_WORDS: INavWord[] = [
   { wt: 'WT 5', name: 'Ionosphere, BGD, health, GST', carries: 'Iono correction, group delay, signal health, system time', neededForFix: true, adkd: 0 },
   { wt: 'WT 6', name: 'GST-UTC conversion', carries: 'Conversion to UTC', neededForFix: false, adkd: 4 },
   { wt: 'WT 10', name: 'GST-GPS conversion', carries: 'Conversion to GPS time', neededForFix: false, adkd: 4 },
-  { wt: 'WT 0', name: 'Time / spare', carries: 'Time field and synchronisation', neededForFix: true },
+  { wt: 'WT 0', name: 'Time / spare', carries: 'Time field and synchronisation (GST also comes from WT 5)', neededForFix: false },
   { wt: 'WT 7-9', name: 'Almanac', carries: 'Coarse orbit data for all satellites', neededForFix: false },
 ];
 

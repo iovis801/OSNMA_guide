@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/withBase';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import BitField from '@/components/react/BitField.tsx';
 import ValueTable from '@/components/ui/ValueTable.astro';
@@ -80,14 +81,14 @@ import { ADKD_TABLE, COP_TABLE, PRN_D_TABLE } from '@/data/tables';
   <div class="level-engineer">
     <h3>How a tag is computed</h3>
     <p>A tag is a truncated MAC over a message that binds the data to a time, a counter and the status:</p>
-    <Formula tex="m = (\text{PRN}_D \,\|\, \text{PRN}_A \,\|\, GST_{SF} \,\|\, \text{CTR} \,\|\, \text{NMAS} \,\|\, \text{navdata})" display />
+    <Formula tex="m = (\text{PRN}_D \,\|\, \text{PRN}_A \,\|\, GST_{SF} \,\|\, \text{CTR} \,\|\, \text{NMAS} \,\|\, \text{navdata} \,\|\, P)" display />
     <Formula tex="\text{tag} = \operatorname{trunc}(l_t,\ \operatorname{mac}(K, m))" display />
     <p>
       Tag0 uses the same construction but drops PRN_D. The sequence of ADKD types
       across the tags is fixed by the
-      <a href="/structures/maclt">MAC look-up table</a>, and the disclosed key is
+      <a href={withBase('/structures/maclt')}>MAC look-up table</a>, and the disclosed key is
       verified against the chain on the
-      <a href="/machinery/tesla-chain">TESLA key chain</a> page.
+      <a href={withBase('/machinery/tesla-chain')}>TESLA key chain</a> page.
     </p>
   </div>
 </BaseLayout>

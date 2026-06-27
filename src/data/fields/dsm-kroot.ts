@@ -29,6 +29,6 @@ export const DSM_KROOT: BitFieldSpec = {
     { name: 'α', bits: 48, color: 'key', desc: 'Random chain pattern, mixed into every key derivation.' },
     { name: 'KROOT', bits: 128, color: 'key', desc: 'The root key K_0 (length = l_K; 128 bits shown).' },
     { name: 'DS', bits: 512, color: 'sig', tableId: 'ecdsa', desc: 'ECDSA signature over the header + KROOT (512 bits for P-256).' },
-    { name: 'P_DK', bits: 32, color: 'muted', desc: 'Padding to a whole number of 104-bit blocks.' },
+    { name: 'P_DK', bits: 88, color: 'muted', desc: 'Padding to a whole number of 104-bit blocks (88 bits here → 104 + 128 + 512 + 88 = 832 = 8 × 104, i.e. NB_DK = 2).' },
   ],
 };

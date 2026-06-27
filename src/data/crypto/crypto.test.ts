@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { buildLeaf, computeRoot } from './merkle';
-import { deriveChain, verifyChainKey } from './tesla';
+import { deriveChain, verifyChainKey, hashChainStep, encodeGstSf } from './tesla';
 import { truncBits } from './hash';
 import { hexToBytes, bytesToHex } from './bytes';
 import { MERKLE_TREE_1 } from '@/data/testvectors/merkle-tree-1';
@@ -45,6 +45,22 @@ describe('TESLA one-way key chain', () => {
     const res = verifyChainKey(chain[7], chain[0], alpha, 128, 'SHA-256');
     expect(res.ok).toBe(true);
     expect(res.iterations).toBe(7);
+  });
+
+  it('binds each derived key to the output key subframe GST (SIS ICD 6.4)', () => {
+    const chain = deriveChain(seed, alpha, 128, 'SHA-256', 6, 1248, 0);
+    for (let i = chain.length - 1; i > 0; i--) {
+      const expected = bytesToHex(
+        hashChainStep(
+          hexToBytes(chain[i].keyHex),
+          encodeGstSf(chain[i - 1].wn, chain[i - 1].tow),
+          hexToBytes(alpha),
+          128,
+          'SHA-256',
+        ),
+      );
+      expect(chain[i - 1].keyHex).toBe(expected);
+    }
   });
 
   it('fails verification for a forged key', () => {

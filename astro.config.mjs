@@ -1,11 +1,14 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
+import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
-// Host-agnostic static build (see plan: "local first, decide later").
-// To deploy under a sub-path later, set `base` and `site` here.
+// Deployed under a sub-path on the main site: https://iovis.space/osnma
+// `site` + `base` drive canonical URLs, the sitemap and base-prefixed assets.
 export default defineConfig({
-  integrations: [react()],
+  site: 'https://iovis.space',
+  base: '/osnma',
+  integrations: [react(), sitemap()],
   vite: {
     plugins: [tailwindcss()],
   },

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/withBase';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import ReceiverStartup from '@/components/react/startup/ReceiverStartup.tsx';
 import Callout from '@/components/ui/Callout.astro';
@@ -51,7 +52,7 @@ import DocRef from '@/components/ui/DocRef.astro';
   <p>
     Two firm numbers from the documents drive the cost. A DSM-KROOT must be fully
     received within one hour and a DSM-PKR within thirteen hours, or the partial
-    blocks are discarded <DocRef doc="rxg" section="3.2" />. And because the TESLA
+    blocks are discarded <DocRef doc="rxg" section="3.2 / 3.3" />. And because the TESLA
     chain advances one key every 30-second subframe, re-anchoring a cached key
     costs exactly one hash per missed subframe <DocRef doc="rxg" section="5.4.2" /> —
     cheap, and proportional to how long you were away, not to the age of the chain.
@@ -72,7 +73,7 @@ import DocRef from '@/components/ui/DocRef.astro';
       its clock uncertainty has to be under 15 seconds for normal tags. Until then,
       a delayed key might already be public and tags could be forged, so no
       authentication is allowed. See
-      <a href="/receiver/time-sync">the time synchronisation gate</a>.
+      <a href={withBase('/receiver/time-sync')}>the time synchronisation gate</a>.
     </p>
   </Callout>
 </BaseLayout>

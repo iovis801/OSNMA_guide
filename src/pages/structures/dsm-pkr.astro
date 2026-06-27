@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/withBase';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import BitField from '@/components/react/BitField.tsx';
 import ValueTable from '@/components/ui/ValueTable.astro';
@@ -50,7 +51,7 @@ import { NB_DP_TABLE, NPKT_TABLE, MID_TABLE } from '@/data/tables';
     The <strong>MID</strong> field names which of the sixteen leaves is being
     delivered, and therefore which four sibling nodes travel with it in the
     <strong>ITN</strong> (Intermediate Tree Nodes) field — four 256-bit hashes, one
-    per tree level <DocRef doc="icd" section="3.2.2.2" />.
+    per tree level <DocRef doc="icd" section="3.2.2.2 / 3.2.2.3" />.
   </p>
   <ValueTable table={MID_TABLE} />
 
@@ -71,7 +72,7 @@ import { NB_DP_TABLE, NPKT_TABLE, MID_TABLE } from '@/data/tables';
       The receiver authenticates the key by recomputing the Merkle root from the
       leaf and the carried siblings and comparing it to the root it holds. Watch
       that climb run on real test-vector data in the
-      <a href="/machinery/merkle-tree">Merkle tree explorer</a>.
+      <a href={withBase('/machinery/merkle-tree')}>Merkle tree explorer</a>.
     </p>
   </Callout>
 

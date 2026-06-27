@@ -3,6 +3,8 @@
  * Inline citation chip. `doc` selects which official reference; `section` is the
  * clause number. Links to the Sources page so the provenance is always reachable.
  */
+import { withBase } from '@/lib/withBase';
+
 interface Props {
   doc: 'icd' | 'rxg';
   section: string;
@@ -15,7 +17,7 @@ const title =
     : `Galileo OSNMA Receiver Guidelines v1.3, section ${section}`;
 ---
 <a
-  href="/reference/sources"
+  href={withBase('/reference/sources')}
   title={title}
   class="ml-1 inline-flex items-center gap-1 rounded border border-line bg-panel2 px-1.5 py-0.5 align-middle text-[11px] font-medium text-muted no-underline transition-colors hover:border-brand hover:text-brand-bright"
 >

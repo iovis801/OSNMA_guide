@@ -15,7 +15,7 @@ export const ADKD_TABLE: RefTable = {
   ],
   doc: 'icd',
   section: '4.2.1.3',
-  caption: 'Which navigation data a tag authenticates, and how long until its key is disclosed.',
+  caption: 'Which navigation data a tag authenticates (SIS ICD 4.2.1.3). The key-delay figures come from 5.8.2: one MACK message (one subframe), plus 10 more subframes for the ADKD = 12 Slow MAC.',
 };
 
 /** COP — Cut-Off Point (SIS ICD 4.2.1.2). */

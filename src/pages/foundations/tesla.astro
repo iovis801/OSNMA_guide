@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/withBase';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import Formula from '@/components/ui/Formula.astro';
 import Callout from '@/components/ui/Callout.astro';
@@ -61,7 +62,7 @@ import DocRef from '@/components/ui/DocRef.astro';
       still allows the slow MACs only <DocRef doc="rxg" section="2.1" />. The full
       treatment — the inequalities, the GST sub-frame computation and the anti-replay
       logic — is on the
-      <a href="/receiver/time-sync">time synchronisation gate</a> page.
+      <a href={withBase('/receiver/time-sync')}>time synchronisation gate</a> page.
     </p>
   </div>
 
@@ -78,8 +79,8 @@ import DocRef from '@/components/ui/DocRef.astro';
   <p>
     The chain itself — how keys are generated, disclosed in reverse, and verified
     back to the root — comes alive in the interactive
-    <a href="/machinery/tesla-chain">TESLA key chain</a>. To see what anchors the
-    root key, read about the <a href="/structures/dsm-kroot">DSM-KROOT</a> and the
-    full <a href="/machinery/chain-of-trust">chain of trust</a>.
+    <a href={withBase('/machinery/tesla-chain')}>TESLA key chain</a>. To see what anchors the
+    root key, read about the <a href={withBase('/structures/dsm-kroot')}>DSM-KROOT</a> and the
+    full <a href={withBase('/machinery/chain-of-trust')}>chain of trust</a>.
   </p>
 </BaseLayout>

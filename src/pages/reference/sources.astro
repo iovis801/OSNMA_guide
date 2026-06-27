@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/withBase';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import Callout from '@/components/ui/Callout.astro';
 
@@ -65,7 +66,7 @@ const topicMap: { topic: string; where: string }[] = [
     The Receiver Guidelines v1.3 ship with a set of official test vectors: real
     Merkle trees and public keys (in XML), real Digital Signature Messages, and
     raw Galileo I/NAV streams (CSV) covering nominal operation and every lifecycle
-    event. This site's live <a href="/machinery/merkle-tree">Merkle tree demo</a>
+    event. This site's live <a href={withBase('/machinery/merkle-tree')}>Merkle tree demo</a>
     recomputes a root from one of these real public keys, so the numbers you see
     are the genuine published values rather than illustrations. The test vectors
     are an annex to the Receiver Guidelines v1.3 and are covered by the Terms of

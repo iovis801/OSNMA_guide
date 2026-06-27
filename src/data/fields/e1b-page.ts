@@ -28,7 +28,7 @@ export const OSNMA_FIELD: BitFieldSpec = {
   title: 'OSNMA field (per page)',
   totalBits: '40 bits',
   doc: 'icd',
-  section: '3',
+  section: '2',
   summary:
     'Each page contributes 8 bits to the slow HKROOT stream and 32 bits to the fast MACK stream. Over the 15 pages of a 30 s subframe these build a 120-bit HKROOT message and a 480-bit MACK message.',
   fields: [

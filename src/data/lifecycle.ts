@@ -71,25 +71,23 @@ export const LIFECYCLE_EVENTS: LifecycleEvent[] = [
         actions: [
           'NMA Status goes to "Don’t use" — do not authenticate navigation data.',
           'Discard the revoked chain (CID = i) immediately.',
+          'Retrieve the new DSM-KROOT (CID = i′) and verify it with the current public key, ready for when it enters force.',
         ],
       },
       {
-        label: 'New chain retrieved',
+        label: 'New chain in force',
         testVector: 'crev_step2',
-        nmas: "Don't use",
+        nmas: 'Operational',
         actions: [
-          'Retrieve the new DSM-KROOT (CID = i′) and verify it with the current public key.',
-          'Still do not authenticate until the service returns to Operational.',
+          'The new chain (CID = i′) enters into force and NMA Status reverses to Operational.',
+          'Navigation data authentication resumes with the new chain. CPKS still reads Chain Revoked.',
         ],
       },
       {
         label: 'Back to nominal',
         testVector: 'crev_step3',
         nmas: 'Operational',
-        actions: [
-          'NMA Status returns to Operational; authenticate with the new chain.',
-          'CPKS clears back to Nominal.',
-        ],
+        actions: ['CPKS clears back to Nominal.'],
       },
     ],
   },

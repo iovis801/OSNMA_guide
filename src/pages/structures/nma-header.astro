@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/withBase';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import BitField from '@/components/react/BitField.tsx';
 import ValueTable from '@/components/ui/ValueTable.astro';
@@ -59,7 +60,7 @@ import { NMAS_TABLE, CID_TABLE, CPKS_TABLE } from '@/data/tables';
     chain renewal, chain revocation, public-key renewal or revocation, a new
     Merkle tree, or an alert. Each value triggers a specific receiver procedure,
     covered in
-    <a href="/lifecycle/events">Key &amp; lifecycle management</a>.
+    <a href={withBase('/lifecycle/events')}>Key &amp; lifecycle management</a>.
   </p>
   <ValueTable table={CPKS_TABLE} />
 

@@ -1,5 +1,6 @@
 ---
 /** Site footer with provenance. This site is an explainer; the authority is EUSPA. */
+import { withBase } from '@/lib/withBase';
 ---
 <footer class="mt-16 border-t border-line py-8 text-sm text-muted">
   <div class="space-y-2">
@@ -11,7 +12,10 @@
     </p>
     <p>
       Always consult the official documents for implementation. See
-      <a href="/reference/sources" class="text-brand-bright underline underline-offset-2">Sources</a>.
+      <a href={withBase('/reference/sources')} class="text-brand-bright underline underline-offset-2">Sources</a>.
+    </p>
+    <p>
+      Part of <a href="https://iovis.space/" class="text-brand-bright underline underline-offset-2">iovis.space</a>.
     </p>
   </div>
 </footer>

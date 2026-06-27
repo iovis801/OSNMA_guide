@@ -20,6 +20,6 @@ export const DSM_PKR: BitFieldSpec = {
     { name: 'NPKT', bits: 4, color: 'sig', tableId: 'npkt', desc: 'New public key type (ECDSA P-256/P-521 or OAM).' },
     { name: 'NPKID', bits: 4, color: 'sig', desc: 'New public key ID.' },
     { name: 'NPK', bits: 264, color: 'sig', tableId: 'ecdsa', desc: 'The new public key, compressed (264 bits for P-256).' },
-    { name: 'P_DP', bits: 24, color: 'muted', desc: 'Padding to a whole number of blocks.' },
+    { name: 'P_DP', bits: 48, color: 'muted', desc: 'Padding to a whole number of blocks (48 bits here → 1040 + 264 + 48 = 1352 = 13 × 104, i.e. NB_DP = 7).' },
   ],
 };

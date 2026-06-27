@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/withBase';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import BitField from '@/components/react/BitField.tsx';
 import SubframeBuilder from '@/components/react/SubframeBuilder.tsx';
@@ -51,8 +52,8 @@ import { E1B_PAGE, OSNMA_FIELD } from '@/data/fields';
       The 120-bit HKROOT holds the NMA Header (byte 1), the DSM Header (byte 2) and
       then DSM-KROOT or DSM-PKR block bits. Because a full DSM spans many subframes,
       the receiver collects HKROOT blocks over minutes and reassembles them — see
-      <a href="/structures/dsm-kroot">DSM-KROOT</a> and
-      <a href="/structures/dsm-pkr">DSM-PKR</a>.
+      <a href={withBase('/structures/dsm-kroot')}>DSM-KROOT</a> and
+      <a href={withBase('/structures/dsm-pkr')}>DSM-PKR</a>.
     </p>
   </Callout>
 

@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.2.0",
+    "@astrojs/sitemap": "^3.7.3",
     "@noble/curves": "^1.7.0",
     "@noble/hashes": "^1.6.0",
     "astro": "^5.2.0",

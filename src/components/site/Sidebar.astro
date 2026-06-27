@@ -1,14 +1,16 @@
 ---
 import { NAV } from '@/data/nav';
+import { withBase, stripBase } from '@/lib/withBase';
 
 interface Props {
   currentPath: string;
 }
 const { currentPath } = Astro.props;
+// Strip the deploy base so comparisons work against the unprefixed nav hrefs.
+const path = stripBase(currentPath);
 
 function isActive(href: string): boolean {
-  if (href === '/') return currentPath === '/';
-  return currentPath === href || currentPath === href + '/';
+  return (href.replace(/\/$/, '') || '/') === path;
 }
 ---
 <nav aria-label="Site sections" class="text-sm">
@@ -23,7 +25,7 @@ function isActive(href: string): boolean {
             <li>
               {item.ready ? (
                 <a
-                  href={item.href}
+                  href={withBase(item.href)}
                   class:list={[
                     '-ml-px block border-l-2 py-1 pl-3 transition-colors',
                     isActive(item.href)

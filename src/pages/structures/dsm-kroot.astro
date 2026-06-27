@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/withBase';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import BitField from '@/components/react/BitField.tsx';
 import ValueTable from '@/components/ui/ValueTable.astro';
@@ -62,8 +63,8 @@ import { NB_DK_TABLE, HF_TABLE, MF_TABLE, KS_TABLE, TS_TABLE, ECDSA_TABLE } from
   <p>
     <strong>MACLT</strong> (8 bits) selects the fixed sequence of tag types
     (ADKD values) that each MACK message will follow — see
-    <a href="/structures/mack">the MACK message</a> and
-    <a href="/structures/maclt">the MAC look-up table</a>.
+    <a href={withBase('/structures/mack')}>the MACK message</a> and
+    <a href={withBase('/structures/maclt')}>the MAC look-up table</a>.
   </p>
 
   <h2>Time of applicability</h2>

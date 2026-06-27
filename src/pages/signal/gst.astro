@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/withBase';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import GstClock from '@/components/react/GstClock.tsx';
 import Formula from '@/components/ui/Formula.astro';
@@ -43,14 +44,14 @@ import DocRef from '@/components/ui/DocRef.astro';
     tag to one moment:
   </p>
   <Formula tex="K_i = \operatorname{trunc}\big(l_k,\ \operatorname{hash}(K_{i+1} \,\|\, GST_{SF,i} \,\|\, \alpha)\big)" display />
-  <Formula tex="m = (\text{PRN}_D \,\|\, \text{PRN}_A \,\|\, GST_{SF} \,\|\, \text{CTR} \,\|\, \text{NMAS} \,\|\, \text{navdata})" display />
+  <Formula tex="m = (\text{PRN}_D \,\|\, \text{PRN}_A \,\|\, GST_{SF} \,\|\, \text{CTR} \,\|\, \text{NMAS} \,\|\, \text{navdata} \,\|\, P)" display />
 
   <Callout type="security">
     <p>
       Because time is baked into the keys and tags, a tag from one subframe cannot
       be replayed in another — the GST_SF would not match. This is also why the
       receiver's clock must be loosely synchronised before authentication: see the
-      <a href="/receiver/time-sync">time synchronisation gate</a>.
+      <a href={withBase('/receiver/time-sync')}>time synchronisation gate</a>.
     </p>
   </Callout>
 </BaseLayout>

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import { NAV } from '@/data/nav';
+import { withBase } from '@/lib/withBase';
 
 const ready = NAV.flatMap((s) => s.items).filter((i) => i.ready);
 ---
@@ -17,7 +18,7 @@ const ready = NAV.flatMap((s) => s.items).filter((i) => i.ready);
         ready.map((item) => (
           <li>
             <a
-              href={item.href}
+              href={withBase(item.href)}
               class="rounded-lg border border-line bg-panel px-3 py-1.5 text-sm text-ink transition-colors hover:border-brand hover:text-brand-bright"
             >
               {item.title}
@@ -27,7 +28,7 @@ const ready = NAV.flatMap((s) => s.items).filter((i) => i.ready);
       }
     </ul>
     <p class="mt-8">
-      <a href="/" class="text-brand-bright underline underline-offset-2">Back to the start →</a>
+      <a href={withBase('/')} class="text-brand-bright underline underline-offset-2">Back to the start →</a>
     </p>
   </section>
 </BaseLayout>

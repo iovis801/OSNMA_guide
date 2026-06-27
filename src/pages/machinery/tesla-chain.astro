@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/withBase';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import TeslaChain from '@/components/react/TeslaChain.tsx';
 import Formula from '@/components/ui/Formula.astro';
@@ -61,7 +62,7 @@ import DocRef from '@/components/ui/DocRef.astro';
     <p>
       The delay only protects you if the key really was secret when the tag
       arrived. That is enforced by the loose time check on the
-      <a href="/receiver/time-sync">time synchronisation gate</a> page.
+      <a href={withBase('/receiver/time-sync')}>time synchronisation gate</a> page.
     </p>
   </Callout>
 

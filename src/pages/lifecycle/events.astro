@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/withBase';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import LifecycleEvents from '@/components/react/LifecycleEvents.tsx';
 import ValueTable from '@/components/ui/ValueTable.astro';
@@ -60,7 +61,7 @@ import { NMAS_TABLE, CPKS_TABLE } from '@/data/tables';
     <p>
       A receiver returning from a long sleep may have missed an entire event. That
       is why start-up re-checks PKID and CID against what it has stored — see
-      <a href="/receiver/startup">cold / warm / hot start</a>.
+      <a href={withBase('/receiver/startup')}>cold / warm / hot start</a>.
     </p>
   </Callout>
 </BaseLayout>

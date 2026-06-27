@@ -4,6 +4,7 @@ import Header from '@/components/site/Header.astro';
 import Sidebar from '@/components/site/Sidebar.astro';
 import Footer from '@/components/site/Footer.astro';
 import { READING_ORDER } from '@/data/nav';
+import { withBase, stripBase } from '@/lib/withBase';
 
 interface Props {
   title: string;
@@ -14,12 +15,56 @@ interface Props {
 
 const { title, description = 'An exhaustive, interactive explainer of Galileo OSNMA.', withSidebar = true } = Astro.props;
 const currentPath = Astro.url.pathname;
+// `currentPath` includes the deploy base (e.g. `/osnma/...`); strip it before
+// comparing against the unprefixed reading-order hrefs.
+const normalizedPath = stripBase(currentPath);
 
-const idx = READING_ORDER.findIndex(
-  (i) => i.href === currentPath || i.href + '/' === currentPath || i.href === currentPath.replace(/\/$/, ''),
-);
+const idx = READING_ORDER.findIndex((i) => (i.href.replace(/\/$/, '') || '/') === normalizedPath);
 const prev = idx > 0 ? READING_ORDER[idx - 1] : null;
 const next = idx >= 0 && idx < READING_ORDER.length - 1 ? READING_ORDER[idx + 1] : null;
+
+// SEO. `withBase` is used for asset/home URLs so they stay correct whether or
+// not `import.meta.env.BASE_URL` carries a trailing slash.
+const faviconHref = withBase('/favicon.svg');
+const ogImage = new URL(faviconHref, Astro.site).href;
+const guideHome = new URL(withBase('/'), Astro.site).href;
+const siteHome = new URL('/', Astro.site).href;
+const pageTitle = `${title} · OSNMA Guide`;
+
+// Canonical resolves the current (base-prefixed) path against `site`. The base
+// index reports its pathname without a trailing slash, so normalise it to the
+// directory form used by the sitemap and breadcrumbs.
+const isGuideHome = normalizedPath === '/';
+const canonical = isGuideHome ? guideHome : new URL(Astro.url.pathname, Astro.site).href;
+
+const breadcrumbItems = [
+  { name: 'Home', item: siteHome },
+  { name: 'OSNMA Guide', item: guideHome },
+  ...(isGuideHome ? [] : [{ name: title, item: canonical }]),
+];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'TechArticle',
+    headline: title,
+    description,
+    url: canonical,
+    image: ogImage,
+    inLanguage: 'en',
+    isPartOf: { '@type': 'WebSite', name: 'IOVIS Space', url: siteHome },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: breadcrumbItems.map((b, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: b.name,
+      item: b.item,
+    })),
+  },
+];
 ---
 <!doctype html>
 <html lang="en" data-level="engineer">
@@ -27,7 +72,23 @@ const next = idx >= 0 && idx < READING_ORDER.length - 1 ? READING_ORDER[idx + 1]
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    <title>{title} · OSNMA Guide</title>
+    <title>{pageTitle}</title>
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href={faviconHref} />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content="IOVIS Space" />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -79,7 +140,7 @@ const next = idx >= 0 && idx < READING_ORDER.length - 1 ? READING_ORDER[idx + 1]
                 <div>
                   {prev && (
                     <a
-                      href={prev.href}
+                      href={withBase(prev.href)}
                       class="block rounded-lg border border-line bg-panel p-3 text-sm transition-colors hover:border-brand"
                     >
                       <span class="text-xs text-muted">← Previous</span>
@@ -90,7 +151,7 @@ const next = idx >= 0 && idx < READING_ORDER.length - 1 ? READING_ORDER[idx + 1]
                 <div class="text-right">
                   {next && (
                     <a
-                      href={next.href}
+                      href={withBase(next.href)}
                       class="block rounded-lg border border-line bg-panel p-3 text-sm transition-colors hover:border-brand"
                     >
                       <span class="text-xs text-muted">Next →</span>

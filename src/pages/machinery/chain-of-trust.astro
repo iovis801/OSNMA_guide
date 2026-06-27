@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/withBase';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import ChainOfTrust from '@/components/react/ChainOfTrust.tsx';
 import Callout from '@/components/ui/Callout.astro';
@@ -37,7 +38,7 @@ import Callout from '@/components/ui/Callout.astro';
       Break any link and the chain stops: an unverified public key cannot validate
       a KROOT signature, and an unanchored key cannot validate a tag. That is why a
       receiver rebuilds exactly the missing links at start-up — and no more. See
-      <a href="/receiver/startup">cold / warm / hot start</a>.
+      <a href={withBase('/receiver/startup')}>cold / warm / hot start</a>.
     </p>
   </Callout>
 

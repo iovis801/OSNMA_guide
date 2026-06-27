@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/withBase';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import Formula from '@/components/ui/Formula.astro';
 import Callout from '@/components/ui/Callout.astro';
@@ -83,7 +84,7 @@ import { HF_TABLE, MF_TABLE, ECDSA_TABLE, MID_TABLE } from '@/data/tables';
   </p>
   <p>
     You can watch this happen on real data in the
-    <a href="/machinery/merkle-tree">Merkle Tree Explorer</a>.
+    <a href={withBase('/machinery/merkle-tree')}>Merkle Tree Explorer</a>.
   </p>
   <div class="level-engineer">
     <p>

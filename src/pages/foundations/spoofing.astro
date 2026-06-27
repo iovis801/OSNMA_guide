@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { withBase } from '@/lib/withBase';
 import PageHeader from '@/components/ui/PageHeader.astro';
 import Callout from '@/components/ui/Callout.astro';
 ---
@@ -52,7 +53,7 @@ import Callout from '@/components/ui/Callout.astro';
     the navigation data genuinely originated from Galileo and was not altered in
     flight. It achieves this by attaching short authentication tags (truncated MACs)
     to the data and disclosing the keys to check them a little later — the
-    <a href="/foundations/tesla">TESLA</a> scheme.
+    <a href={withBase('/foundations/tesla')}>TESLA</a> scheme.
   </p>
 
   <Callout type="security" title="What OSNMA is — and is not">
@@ -77,7 +78,7 @@ import Callout from '@/components/ui/Callout.astro';
   </p>
 
   <p>
-    Next: the <a href="/foundations/crypto-primer">cryptographic toolkit</a> behind
-    it, then <a href="/foundations/tesla">how TESLA turns delay into trust</a>.
+    Next: the <a href={withBase('/foundations/crypto-primer')}>cryptographic toolkit</a> behind
+    it, then <a href={withBase('/foundations/tesla')}>how TESLA turns delay into trust</a>.
   </p>
 </BaseLayout>
