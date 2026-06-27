@@ -1,0 +1,93 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import BitField from '@/components/react/BitField.tsx';
+import ValueTable from '@/components/ui/ValueTable.astro';
+import Formula from '@/components/ui/Formula.astro';
+import Callout from '@/components/ui/Callout.astro';
+import DocRef from '@/components/ui/DocRef.astro';
+import { MACK, TAG_INFO } from '@/data/fields';
+import { ADKD_TABLE, COP_TABLE, PRN_D_TABLE } from '@/data/tables';
+---
+<BaseLayout
+  title="MACK message"
+  description="The MACK message: the tags and disclosed TESLA key that authenticate Galileo navigation data."
+>
+  <PageHeader
+    eyebrow="3 · Data structures"
+    title="The MACK message"
+    lead="The fast OSNMA stream: 480 bits per subframe carrying the tags that authenticate the previous subframe's data, followed by the key that unlocks them."
+  />
+
+  <p>
+    Where HKROOT trickles out the keys and signatures slowly, the
+    <strong>MACK</strong> message moves fast — 32 bits per page, assembled into 480
+    bits every 30 seconds <DocRef doc="icd" section="4" />. It carries two things:
+    a set of <strong>tags</strong> (truncated MACs over navigation data) and the
+    <strong>TESLA key</strong> that verifies the tags sent one subframe earlier.
+  </p>
+
+  <h2>The layout</h2>
+
+  <BitField spec={MACK} client:visible />
+
+  <p>
+    The message opens with a header: <strong>Tag0</strong> (the transmitting
+    satellite's own self-authentication tag), a 12-bit <strong>MACSEQ</strong>, and
+    a 4-bit <strong>COP</strong>. Then come the remaining tag slots — each a tag
+    plus a 16-bit Tag-Info — followed by the disclosed <strong>Key</strong> and
+    zero <strong>padding</strong> up to 480 bits.
+  </p>
+
+  <h2>How many tags fit</h2>
+  <p>
+    The number of tags depends on the key and tag sizes; every slot after Tag0
+    costs <Formula tex="l_t + 16" /> bits, and the key consumes
+    <Formula tex="l_K" />:
+  </p>
+  <Formula tex="n_t = \left\lfloor \frac{480 - l_K}{l_t + 16} \right\rfloor" display />
+  <p>With the test-vector configuration (l_K = 128, l_t = 40) that leaves room for six tags.</p>
+
+  <h2>Tag-Info: what each tag is about</h2>
+  <p>Every tag after Tag0 comes with 16 bits describing what it authenticates:</p>
+
+  <BitField spec={TAG_INFO} client:visible />
+
+  <ValueTable table={ADKD_TABLE} />
+  <ValueTable table={PRN_D_TABLE} />
+  <ValueTable table={COP_TABLE} />
+
+  <h2>Self versus cross authentication</h2>
+  <p>
+    Two satellites appear in every tag. <strong>PRN_A</strong> is the satellite
+    transmitting the tag; <strong>PRN_D</strong> is the satellite whose navigation
+    data is being authenticated. When they differ, one satellite vouches for
+    another's data — <em>cross-authentication</em>, which lets a receiver
+    authenticate a satellite it can barely hear. Tag0 omits PRN_D entirely: it
+    always authenticates the transmitting satellite's own data
+    (<em>self-authentication</em>) <DocRef doc="icd" section="4.2.1" />.
+  </p>
+
+  <Callout type="security">
+    <p>
+      The key in a MACK message verifies the tags from the <em>previous</em>
+      subframe, never the current one. That one-subframe delay is the whole point:
+      when those tags were sent, this key was still secret
+      <DocRef doc="rxg" section="5.5.4" />.
+    </p>
+  </Callout>
+
+  <div class="level-engineer">
+    <h3>How a tag is computed</h3>
+    <p>A tag is a truncated MAC over a message that binds the data to a time, a counter and the status:</p>
+    <Formula tex="m = (\text{PRN}_D \,\|\, \text{PRN}_A \,\|\, GST_{SF} \,\|\, \text{CTR} \,\|\, \text{NMAS} \,\|\, \text{navdata})" display />
+    <Formula tex="\text{tag} = \operatorname{trunc}(l_t,\ \operatorname{mac}(K, m))" display />
+    <p>
+      Tag0 uses the same construction but drops PRN_D. The sequence of ADKD types
+      across the tags is fixed by the
+      <a href="/structures/maclt">MAC look-up table</a>, and the disclosed key is
+      verified against the chain on the
+      <a href="/machinery/tesla-chain">TESLA key chain</a> page.
+    </p>
+  </div>
+</BaseLayout>

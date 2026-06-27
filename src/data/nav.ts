@@ -42,8 +42,8 @@ export const NAV: NavSection[] = [
     title: '2 · OSNMA on the signal',
     blurb: 'Where the authentication bits live in the Galileo message.',
     items: [
-      { title: 'E1-B page, HKROOT & MACK', href: '/signal/structure', blurb: 'The 40-bit OSNMA field and the 30 s subframe.', ready: false },
-      { title: 'Galileo System Time (GST)', href: '/signal/gst', blurb: 'WN, TOW and the subframe clock.', ready: false },
+      { title: 'E1-B page, HKROOT & MACK', href: '/signal/structure', blurb: 'The 40-bit OSNMA field and the 30 s subframe.', ready: true},
+      { title: 'Galileo System Time (GST)', href: '/signal/gst', blurb: 'WN, TOW and the subframe clock.', ready: true},
     ],
   },
   {
@@ -53,9 +53,9 @@ export const NAV: NavSection[] = [
     items: [
       { title: 'NMA Header', href: '/structures/nma-header', blurb: 'NMAS, CID, CPKS.', ready: true },
       { title: 'DSM-KROOT', href: '/structures/dsm-kroot', blurb: 'The signed TESLA root key.', ready: true },
-      { title: 'DSM-PKR', href: '/structures/dsm-pkr', blurb: 'Public key renewal via Merkle tree.', ready: false },
-      { title: 'MACK message', href: '/structures/mack', blurb: 'Tags, Tag-Info and the disclosed key.', ready: false },
-      { title: 'MAC Look-up Table', href: '/structures/maclt', blurb: 'Tag sequences and flexible slots.', ready: false },
+      { title: 'DSM-PKR', href: '/structures/dsm-pkr', blurb: 'Public key renewal via Merkle tree.', ready: true},
+      { title: 'MACK message', href: '/structures/mack', blurb: 'Tags, Tag-Info and the disclosed key.', ready: true},
+      { title: 'MAC Look-up Table', href: '/structures/maclt', blurb: 'Tag sequences and flexible slots.', ready: true},
     ],
   },
   {
@@ -82,7 +82,7 @@ export const NAV: NavSection[] = [
     title: '6 · Key & lifecycle management',
     blurb: 'Renewals, revocations and alerts.',
     items: [
-      { title: 'Status & lifecycle events', href: '/lifecycle/events', blurb: 'EOC, CREV, NPK, PKREV, NMT, OAM.', ready: false },
+      { title: 'Status & lifecycle events', href: '/lifecycle/events', blurb: 'EOC, CREV, NPK, PKREV, NMT, OAM.', ready: true},
     ],
   },
   {
@@ -90,8 +90,8 @@ export const NAV: NavSection[] = [
     title: '7 · Reference',
     blurb: 'Tables, glossary and sources.',
     items: [
-      { title: 'Parameter reference', href: '/reference/parameters', blurb: 'All the value tables in one place.', ready: false },
-      { title: 'Glossary', href: '/reference/glossary', blurb: 'Every acronym, defined.', ready: false },
+      { title: 'Parameter reference', href: '/reference/parameters', blurb: 'All the value tables in one place.', ready: true},
+      { title: 'Glossary', href: '/reference/glossary', blurb: 'Every acronym, defined.', ready: true},
       { title: 'Sources', href: '/reference/sources', blurb: 'The official documents this site cites.', ready: true },
     ],
   },

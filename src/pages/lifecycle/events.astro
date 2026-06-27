@@ -1,0 +1,66 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import LifecycleEvents from '@/components/react/LifecycleEvents.tsx';
+import ValueTable from '@/components/ui/ValueTable.astro';
+import Callout from '@/components/ui/Callout.astro';
+import DocRef from '@/components/ui/DocRef.astro';
+import { NMAS_TABLE, CPKS_TABLE } from '@/data/tables';
+---
+<BaseLayout
+  title="Status & lifecycle events"
+  description="How OSNMA renews and revokes chains, keys and the Merkle tree — and what the receiver does."
+>
+  <PageHeader
+    eyebrow="6 · Key & lifecycle management"
+    title="Status and lifecycle events"
+    lead="Keys and chains do not last forever. OSNMA renews and revokes them on the fly, announcing each event in the header so receivers stay authenticated through the change."
+  />
+
+  <p>
+    Two header fields drive everything here. <strong>NMAS</strong> says whether the
+    service is usable; <strong>CPKS</strong> announces which lifecycle event, if
+    any, is in progress <DocRef doc="icd" section="3.1" />. Together they tell a
+    receiver exactly what to do.
+  </p>
+
+  <ValueTable table={NMAS_TABLE} />
+  <ValueTable table={CPKS_TABLE} />
+
+  <h2>The six events</h2>
+  <p>
+    Each CPKS value beyond Nominal is a managed transition. Some keep the service
+    Operational throughout (renewals); others pass through "Don't use" while
+    something is revoked. Pick an event to see its phases and the receiver actions —
+    each mapped to the official test-vector scenario that reproduces it
+    <DocRef doc="rxg" section="4.2" />:
+  </p>
+
+  <LifecycleEvents client:visible />
+
+  <h2>The pattern</h2>
+  <p>
+    Renewals (EOC, NPK, NMT) overlap the old and new material so authentication
+    never stops: the replacement is broadcast and verified <em>before</em> it takes
+    over. Revocations (CREV, PKREV) cannot do that — the compromised material must
+    go immediately — so the service drops to "Don't use" until a trustworthy
+    replacement is in force. The alert (OAM) is the hard stop: discard everything
+    and reconnect to the GSC server.
+  </p>
+
+  <Callout type="security">
+    <p>
+      Every one of these signals is authenticated — CPKS and NMAS are covered by the
+      DSM-KROOT signature the receiver re-verifies at least hourly. A spoofer cannot
+      force a receiver into "Don't use" or trick it into accepting revoked keys.
+    </p>
+  </Callout>
+
+  <Callout type="note">
+    <p>
+      A receiver returning from a long sleep may have missed an entire event. That
+      is why start-up re-checks PKID and CID against what it has stored — see
+      <a href="/receiver/startup">cold / warm / hot start</a>.
+    </p>
+  </Callout>
+</BaseLayout>

@@ -1,0 +1,86 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import BitField from '@/components/react/BitField.tsx';
+import ValueTable from '@/components/ui/ValueTable.astro';
+import Formula from '@/components/ui/Formula.astro';
+import Callout from '@/components/ui/Callout.astro';
+import DocRef from '@/components/ui/DocRef.astro';
+import { DSM_PKR } from '@/data/fields';
+import { NB_DP_TABLE, NPKT_TABLE, MID_TABLE } from '@/data/tables';
+---
+<BaseLayout
+  title="DSM-PKR"
+  description="DSM-PKR: how OSNMA delivers and authenticates a public key over the signal."
+>
+  <PageHeader
+    eyebrow="3 · Data structures"
+    title="DSM-PKR: public key renewal"
+    lead="The message that hands a receiver a public key over the air, carrying just enough of the Merkle tree to prove the key is genuine."
+  />
+
+  <p>
+    Before a receiver can trust a signed KROOT, it needs the public key that signed
+    it. The <strong>DSM-PKR</strong> delivers that key in the signal
+    <DocRef doc="icd" section="3.2.2" />. Rather than ship a heavyweight
+    certificate, it carries the key as one <em>leaf</em> of the Merkle tree plus the
+    four sibling nodes needed to climb to the root the receiver already trusts.
+  </p>
+
+  <h2>The layout</h2>
+  <p>Select a field to see what it carries:</p>
+
+  <BitField spec={DSM_PKR} client:visible />
+
+  <h2>From key to leaf</h2>
+  <p>
+    The public key does not sit in the tree on its own. It is wrapped with a type
+    and an identifier to form the Merkle leaf:
+  </p>
+  <Formula tex="m_i = \text{NPKT} \,\|\, \text{NPKID} \,\|\, \text{NPK}" display />
+  <p>
+    <strong>NPKT</strong> says what kind of key it is (ECDSA P-256, P-521, or an
+    alert message), <strong>NPKID</strong> identifies it, and <strong>NPK</strong>
+    is the compressed key itself. The receiver hashes this leaf and works upward.
+  </p>
+  <ValueTable table={NPKT_TABLE} />
+
+  <h2>Which leaf, and which siblings</h2>
+  <p>
+    The <strong>MID</strong> field names which of the sixteen leaves is being
+    delivered, and therefore which four sibling nodes travel with it in the
+    <strong>ITN</strong> (Intermediate Tree Nodes) field — four 256-bit hashes, one
+    per tree level <DocRef doc="icd" section="3.2.2.2" />.
+  </p>
+  <ValueTable table={MID_TABLE} />
+
+  <h2>Size and delivery</h2>
+  <p>
+    The <strong>NB_DP</strong> field fixes how many 104-bit blocks the DSM-PKR
+    spans, and therefore its total length.
+  </p>
+  <ValueTable table={NB_DP_TABLE} />
+  <p>
+    Like every DSM, a DSM-PKR is reassembled from blocks carried in the HKROOT
+    stream. Its blocks must all arrive within a 13-hour reception window or the
+    partial message is discarded <DocRef doc="rxg" section="3.2" />.
+  </p>
+
+  <Callout type="note">
+    <p>
+      The receiver authenticates the key by recomputing the Merkle root from the
+      leaf and the carried siblings and comparing it to the root it holds. Watch
+      that climb run on real test-vector data in the
+      <a href="/machinery/merkle-tree">Merkle tree explorer</a>.
+    </p>
+  </Callout>
+
+  <div class="level-engineer">
+    <h3>Padding</h3>
+    <p>
+      A trailing <strong>P_DP</strong> field pads the message up to a whole number
+      of 104-bit blocks. Its content is a hash of the tree root and the leaf, so it
+      carries no secret and simply fills the last block.
+    </p>
+  </div>
+</BaseLayout>

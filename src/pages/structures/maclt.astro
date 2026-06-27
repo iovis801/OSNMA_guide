@@ -1,0 +1,69 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import ValueTable from '@/components/ui/ValueTable.astro';
+import Callout from '@/components/ui/Callout.astro';
+import DocRef from '@/components/ui/DocRef.astro';
+import { MACLT_TABLE } from '@/data/tables';
+---
+<BaseLayout
+  title="MAC look-up table"
+  description="The MACLT: the fixed sequence of tag types that lets a receiver parse a MACK without spending bits to describe it."
+>
+  <PageHeader
+    eyebrow="3 · Data structures"
+    title="The MAC look-up table"
+    lead="A single byte in the DSM-KROOT picks a fixed recipe for what every tag slot in a MACK means — so the signal never has to spell it out."
+  />
+
+  <p>
+    A MACK message is a list of tags, but a tag on its own does not say what kind
+    of data it covers. Rather than describe each slot on the air, OSNMA agrees the
+    pattern in advance. The <strong>MACLT</strong> field in the DSM-KROOT selects
+    one entry from the MAC look-up table, and that entry fixes the sequence of
+    <a href="/structures/mack">ADKD</a> types for every tag in the MACK
+    <DocRef doc="icd" section="4.2" />. The sequence stays constant for as long as a
+    chain is in force.
+  </p>
+
+  <h2>The table</h2>
+
+  <ValueTable table={MACLT_TABLE} />
+
+  <h2>Reading a sequence</h2>
+  <p>Each slot in a sequence is written as a short code:</p>
+  <ul>
+    <li><strong>Two digits</strong> — the ADKD type: <code>00</code> for ephemeris/clock/status, <code>04</code> for timing, <code>12</code> for the slow MAC.</li>
+    <li><strong>S</strong> — self-authentication: the tag covers the transmitting satellite's own data.</li>
+    <li><strong>E</strong> — Galileo cross-authentication: the tag covers another Galileo satellite's data.</li>
+    <li><strong>FLX</strong> — a flexible slot whose target is not fixed by the table; its Tag-Info is instead authenticated by MACSEQ <DocRef doc="rxg" section="5.5.3" />.</li>
+  </ul>
+  <p>
+    So a sequence such as <code>00S, FLX, 04S, FLX, 12S, 00E</code> tells the
+    receiver: the first tag is a self ephemeris tag, the third a self timing tag,
+    the fifth a self slow-MAC tag, the last a cross-authentication ephemeris tag —
+    and the two FLX slots may point anywhere, with MACSEQ proving the receiver read
+    their Tag-Info correctly. The test vectors use <strong>MACLT = 34</strong>.
+  </p>
+
+  <Callout type="tip">
+    <p>
+      Fixing the pattern is a bandwidth trick. Because both ends share the table, a
+      receiver already knows what slot 3 should authenticate without the signal
+      spending a single bit to say so — leaving the precious 480 bits of the MACK
+      for tags and the key.
+    </p>
+  </Callout>
+
+  <div class="level-engineer">
+    <h3>Why flexible slots need MACSEQ</h3>
+    <p>
+      A fixed table cannot anticipate every operational need, so some slots are left
+      flexible. But a flexible Tag-Info that nobody authenticated would be a way in
+      for an attacker. MACSEQ closes that gap: it is a 12-bit MAC, computed with the
+      same key as the tags, over the flexible Tag-Info fields, so the receiver can
+      confirm those slots were genuinely set by Galileo
+      <DocRef doc="icd" section="4.1.2" />.
+    </p>
+  </div>
+</BaseLayout>

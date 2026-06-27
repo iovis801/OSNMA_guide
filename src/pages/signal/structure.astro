@@ -1,0 +1,67 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import BitField from '@/components/react/BitField.tsx';
+import SubframeBuilder from '@/components/react/SubframeBuilder.tsx';
+import Callout from '@/components/ui/Callout.astro';
+import DocRef from '@/components/ui/DocRef.astro';
+import { E1B_PAGE, OSNMA_FIELD } from '@/data/fields';
+---
+<BaseLayout
+  title="OSNMA on the signal"
+  description="Where OSNMA lives in the Galileo E1-B I/NAV message: the 40-bit field, HKROOT and MACK."
+>
+  <PageHeader
+    eyebrow="2 · OSNMA on the signal"
+    title="Where OSNMA lives on the signal"
+    lead="OSNMA is not a separate broadcast. It rides in a dedicated 40-bit field of the Galileo E1-B navigation page, assembled into two streams over each 30-second subframe."
+  />
+
+  <p>
+    Galileo's Open Service data signal, <strong>E1-B</strong>, carries the I/NAV
+    message as a sequence of pages. A nominal page is 120 bits, and one of its
+    fields — 40 bits wide — is reserved for OSNMA <DocRef doc="icd" section="2" />.
+    Select fields to see the page layout:
+  </p>
+
+  <BitField spec={E1B_PAGE} client:visible />
+
+  <h2>Two streams in 40 bits</h2>
+  <p>
+    The 40-bit OSNMA field splits into a slow stream and a fast stream. The slow
+    <strong>HKROOT</strong> (8 bits) carries the headers and the digitally signed
+    key material; the fast <strong>MACK</strong> (32 bits) carries the tags and the
+    disclosed TESLA key.
+  </p>
+
+  <BitField spec={OSNMA_FIELD} client:visible />
+
+  <h2>Building a subframe</h2>
+  <p>
+    A subframe is 15 pages transmitted over 30 seconds. Each page adds its 8 + 32
+    bits, so across the subframe the streams accumulate into a
+    <strong>120-bit HKROOT message</strong> and a <strong>480-bit MACK message</strong>.
+    Play the assembly:
+  </p>
+
+  <SubframeBuilder client:visible />
+
+  <Callout type="note">
+    <p>
+      The 120-bit HKROOT holds the NMA Header (byte 1), the DSM Header (byte 2) and
+      then DSM-KROOT or DSM-PKR block bits. Because a full DSM spans many subframes,
+      the receiver collects HKROOT blocks over minutes and reassembles them — see
+      <a href="/structures/dsm-kroot">DSM-KROOT</a> and
+      <a href="/structures/dsm-pkr">DSM-PKR</a>.
+    </p>
+  </Callout>
+
+  <Callout type="tip">
+    <p>
+      Only a subset of satellites transmits OSNMA at any moment, and which ones can
+      change. A receiver does not need a specific satellite: the TESLA chain and DSM
+      content are common to the whole constellation, so blocks and keys can be
+      gathered from whichever OSNMA satellites are in view.
+    </p>
+  </Callout>
+</BaseLayout>

@@ -1,0 +1,47 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import ValueTable from '@/components/ui/ValueTable.astro';
+import { TABLE_GROUPS } from '@/data/tables';
+
+const slug = (s: string) =>
+  s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+---
+<BaseLayout title="Parameter reference" description="Every OSNMA field value table in one place.">
+  <PageHeader
+    eyebrow="7 · Reference"
+    title="Parameter reference"
+    lead="Every OSNMA field value table, gathered in one place and cited to the source documents."
+  />
+
+  <p>
+    These are the lookup tables that decode the fields in the NMA Header, the
+    Digital Signature Messages and the MACK. Each one links to the exact clause of
+    the SIS ICD or Receiver Guidelines it comes from. Use the jump links to move
+    between groups.
+  </p>
+
+  <nav aria-label="Jump to a parameter group" class="my-5 flex flex-wrap gap-2 not-prose">
+    {
+      TABLE_GROUPS.map((group) => (
+        <a
+          href={`#${slug(group.title)}`}
+          class="rounded-full border border-line bg-panel px-3 py-1 text-xs font-medium text-muted no-underline transition-colors hover:border-brand hover:text-brand-bright"
+        >
+          {group.title}
+        </a>
+      ))
+    }
+  </nav>
+
+  {
+    TABLE_GROUPS.map((group) => (
+      <section>
+        <h2 id={slug(group.title)}>{group.title}</h2>
+        {group.tables.map((t) => (
+          <ValueTable table={t} />
+        ))}
+      </section>
+    ))
+  }
+</BaseLayout>

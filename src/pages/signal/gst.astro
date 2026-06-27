@@ -1,0 +1,56 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import GstClock from '@/components/react/GstClock.tsx';
+import Formula from '@/components/ui/Formula.astro';
+import Callout from '@/components/ui/Callout.astro';
+import DocRef from '@/components/ui/DocRef.astro';
+---
+<BaseLayout
+  title="Galileo System Time (GST)"
+  description="How GST — week number and time of week — anchors every OSNMA key and tag in time."
+>
+  <PageHeader
+    eyebrow="2 · OSNMA on the signal"
+    title="Galileo System Time"
+    lead="Time is a first-class input to OSNMA. Every key derivation and every tag is bound to a specific 30-second subframe, identified by GST."
+  />
+
+  <p>
+    GST is expressed as two numbers: a <strong>week number</strong> (WN) and a
+    <strong>time of week</strong> (TOW) in seconds <DocRef doc="icd" section="3.2.3.9" />.
+    The DSM-KROOT pins a chain's time of applicability with WN_K and TOWH_K (time of
+    week in hours), giving the reference instant <Formula tex="GST_0" />.
+  </p>
+
+  <h2>Quantising to a subframe</h2>
+  <p>
+    OSNMA does not work in continuous time but in 30-second steps. A receiver maps
+    the current time to the start of its subframe <DocRef doc="rxg" section="5.3" />:
+  </p>
+  <Formula tex="GST_{SF} = GST_0 + 30 \cdot \left\lfloor \frac{GST_{SIS} - GST_0}{30} \right\rfloor" display />
+  <p>
+    That quantised value, not the raw clock, feeds the key chain and the tags — so
+    every receiver computes with exactly the same time. Scrub through a few
+    subframes:
+  </p>
+
+  <GstClock client:visible />
+
+  <h2>Why time is in the maths</h2>
+  <p>
+    GST_SF appears inside the chain derivation and the tag MAC, binding each key and
+    tag to one moment:
+  </p>
+  <Formula tex="K_i = \operatorname{trunc}\big(l_k,\ \operatorname{hash}(K_{i+1} \,\|\, GST_{SF,i} \,\|\, \alpha)\big)" display />
+  <Formula tex="m = (\text{PRN}_D \,\|\, \text{PRN}_A \,\|\, GST_{SF} \,\|\, \text{CTR} \,\|\, \text{NMAS} \,\|\, \text{navdata})" display />
+
+  <Callout type="security">
+    <p>
+      Because time is baked into the keys and tags, a tag from one subframe cannot
+      be replayed in another — the GST_SF would not match. This is also why the
+      receiver's clock must be loosely synchronised before authentication: see the
+      <a href="/receiver/time-sync">time synchronisation gate</a>.
+    </p>
+  </Callout>
+</BaseLayout>
