@@ -1,0 +1,104 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import Formula from '@/components/ui/Formula.astro';
+import Callout from '@/components/ui/Callout.astro';
+import DocRef from '@/components/ui/DocRef.astro';
+import ValueTable from '@/components/ui/ValueTable.astro';
+import { HF_TABLE, MF_TABLE, ECDSA_TABLE, MID_TABLE } from '@/data/tables';
+---
+<BaseLayout
+  title="The cryptographic toolkit"
+  description="Hashes, MACs, signatures, one-way chains and Merkle trees — the primitives OSNMA is built from."
+>
+  <PageHeader
+    eyebrow="1 · Cryptographic foundations"
+    title="The cryptographic toolkit"
+    lead="OSNMA combines five well-understood primitives. Meet each one before seeing how they snap together."
+  />
+
+  <h2>Hash functions</h2>
+  <p>
+    A cryptographic hash <Formula tex="x = H(m)" /> turns any message into a
+    fixed-size fingerprint. It is <strong>one-way</strong> (given <Formula tex="x" />
+    you cannot find <Formula tex="m" />) and <strong>collision resistant</strong>
+    (you cannot find two messages with the same fingerprint). OSNMA uses SHA-256,
+    with SHA3-256 reserved as an option <DocRef doc="icd" section="3.2.3.4" />.
+  </p>
+  <ValueTable table={HF_TABLE} />
+
+  <h2>Message Authentication Codes (MACs)</h2>
+  <p>
+    A MAC is a keyed fingerprint: <Formula tex="t = \mathrm{MAC}(K, m)" />. Anyone
+    holding the secret key <Formula tex="K" /> can compute or check the tag
+    <Formula tex="t" />, proving the message was produced by a key-holder and not
+    altered. MACs are fast and short — ideal for a low-rate broadcast. OSNMA uses
+    HMAC-SHA-256 or CMAC-AES <DocRef doc="icd" section="3.2.3.5" />.
+  </p>
+  <ValueTable table={MF_TABLE} />
+  <Callout type="warning" title="The broadcast key-distribution problem">
+    <p>
+      MACs are symmetric: verifying requires the same secret used to sign. In a
+      one-to-many broadcast, handing that secret to every receiver would let any of
+      them forge messages. This is exactly the impasse TESLA breaks.
+    </p>
+  </Callout>
+
+  <h2>Digital signatures</h2>
+  <p>
+    Signatures are asymmetric: a private key signs, and a freely shared public key
+    verifies. No secret is shared with verifiers, so no verifier can forge. The
+    price is size and cost — signatures are far larger than MAC tags. OSNMA uses
+    ECDSA over P-256 or P-521 <DocRef doc="icd" section="6.1.1" />.
+  </p>
+  <ValueTable table={ECDSA_TABLE} />
+  <p>
+    OSNMA uses signatures sparingly — once, to authenticate the root of a key chain
+    — and then relies on cheap MACs for the high-rate traffic. Best of both worlds.
+  </p>
+
+  <h2>One-way (hash) chains</h2>
+  <p>
+    Apply a hash repeatedly and you get a chain in which each link is the hash of
+    the next:
+  </p>
+  <Formula tex="K_i = H(K_{i+1})" display />
+  <p>
+    From a disclosed key you can walk <em>backward</em> toward the start in a single
+    step each, but you can never walk <em>forward</em> to predict an
+    as-yet-undisclosed key. Publish the first link <Formula tex="K_0" /> as a trusted
+    anchor, and anyone can later confirm that a freshly revealed
+    <Formula tex="K_i" /> belongs to the chain by hashing it back down to
+    <Formula tex="K_0" />. This asymmetry is the backbone of TESLA.
+  </p>
+
+  <h2>Merkle trees</h2>
+  <p>
+    A Merkle tree commits to many items with a single hash. Each leaf is hashed,
+    each internal node hashes its two children, and the single <strong>root</strong>
+    depends on every leaf. To prove one leaf belongs to the tree you reveal just
+    that leaf and the sibling node at each level — a short path — and the verifier
+    recomputes the root. OSNMA uses a 16-leaf SHA-256 tree to authenticate its
+    public keys <DocRef doc="icd" section="6.2" />.
+  </p>
+  <p>
+    You can watch this happen on real data in the
+    <a href="/machinery/merkle-tree">Merkle Tree Explorer</a>.
+  </p>
+  <div class="level-engineer">
+    <p>
+      Each public-key message (DSM-PKR) carries one leaf plus the four siblings
+      needed to climb to the root, selected by the MID field:
+    </p>
+    <ValueTable table={MID_TABLE} />
+  </div>
+
+  <Callout type="tip">
+    <p>
+      Keep these five in mind: hashes fingerprint, MACs authenticate cheaply with a
+      shared key, signatures authenticate without sharing a secret, one-way chains
+      let a key be trusted after the fact, and Merkle trees authenticate many keys
+      with one root. The next page assembles them into TESLA.
+    </p>
+  </Callout>
+</BaseLayout>

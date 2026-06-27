@@ -1,0 +1,78 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import ReceiverStartup from '@/components/react/startup/ReceiverStartup.tsx';
+import Callout from '@/components/ui/Callout.astro';
+import DocRef from '@/components/ui/DocRef.astro';
+---
+<BaseLayout
+  title="Cold / warm / hot start"
+  description="What an OSNMA receiver does when it powers on after a variable time off."
+>
+  <PageHeader
+    eyebrow="5 · The receiver"
+    title="Powering on after time off"
+    lead="When a receiver wakes up, how much work it must do before it can trust a single bit of navigation data depends on two things: what it kept in memory, and how long it was switched off."
+  />
+
+  <p>
+    The Receiver Guidelines define three start-up scenarios by what cryptographic
+    material is already in non-volatile memory <DocRef doc="rxg" section="4.1.1" />.
+    Each one lets the receiver skip part of the chain of trust it would otherwise
+    have to rebuild from scratch:
+  </p>
+
+  <ul>
+    <li><strong>Cold start</strong> — only the Merkle root is stored. Everything else must be acquired and verified.</li>
+    <li><strong>Warm start</strong> — a previously verified public key is also stored, so the Merkle-tree climb is skipped.</li>
+    <li><strong>Hot start</strong> — a verified KROOT and chain parameters are stored too, so the signed DSM-KROOT need not be re-fetched.</li>
+  </ul>
+
+  <p>
+    But stored material does not stay valid forever. The longer the receiver was
+    off, the more likely a key chain rolled over, a public key was renewed, or —
+    very rarely — the whole Merkle tree changed. So a hot start can quietly
+    <em>degrade</em> into a warm or cold start. Drag the time slider below and watch
+    which steps light up.
+  </p>
+
+  <ReceiverStartup client:visible />
+
+  <h2>Reading the flow</h2>
+  <p>
+    The six stages are the receiver's verification chain, top to bottom. Their
+    colours tell you where each piece of trust comes from on this run: green is
+    reused from memory, blue is fetched from the live signal, purple is downloaded
+    out-of-band from the GSC server, gold is computed, and cyan is the final MAC
+    check that authenticates the data.
+  </p>
+
+  <h3>Why the time matters so much</h3>
+  <p>
+    Two firm numbers from the documents drive the cost. A DSM-KROOT must be fully
+    received within one hour and a DSM-PKR within thirteen hours, or the partial
+    blocks are discarded <DocRef doc="rxg" section="3.2" />. And because the TESLA
+    chain advances one key every 30-second subframe, re-anchoring a cached key
+    costs exactly one hash per missed subframe <DocRef doc="rxg" section="5.4.2" /> —
+    cheap, and proportional to how long you were away, not to the age of the chain.
+  </p>
+
+  <Callout type="tip">
+    <p>
+      A receiver that caches its <em>last verified key</em> (not just the KROOT)
+      turns the chain re-anchor into a handful of hashes after a short nap. That is
+      the practical difference between a hot start that authenticates within one
+      subframe and a cold start that may wait minutes for a fresh DSM-KROOT.
+    </p>
+  </Callout>
+
+  <Callout type="security">
+    <p>
+      No matter the scenario, the receiver must first satisfy the time-sync gate:
+      its clock uncertainty has to be under 15 seconds for normal tags. Until then,
+      a delayed key might already be public and tags could be forged, so no
+      authentication is allowed. See
+      <a href="/receiver/time-sync">the time synchronisation gate</a>.
+    </p>
+  </Callout>
+</BaseLayout>

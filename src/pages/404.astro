@@ -1,0 +1,33 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { NAV } from '@/data/nav';
+
+const ready = NAV.flatMap((s) => s.items).filter((i) => i.ready);
+---
+<BaseLayout title="Not found" withSidebar={false}>
+  <section class="mx-auto max-w-2xl px-4 py-24 text-center">
+    <p class="text-sm font-semibold uppercase tracking-wider text-brand">404</p>
+    <h1 class="mt-2 text-3xl font-bold">This page isn't here yet</h1>
+    <p class="mt-3 text-muted">
+      This guide is being filled in section by section. The page you followed may be
+      part of a chapter that is still coming. Here is what is ready to read now:
+    </p>
+    <ul class="mt-6 flex flex-wrap justify-center gap-2">
+      {
+        ready.map((item) => (
+          <li>
+            <a
+              href={item.href}
+              class="rounded-lg border border-line bg-panel px-3 py-1.5 text-sm text-ink transition-colors hover:border-brand hover:text-brand-bright"
+            >
+              {item.title}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="mt-8">
+      <a href="/" class="text-brand-bright underline underline-offset-2">Back to the start →</a>
+    </p>
+  </section>
+</BaseLayout>

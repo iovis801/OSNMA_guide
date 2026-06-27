@@ -1,0 +1,52 @@
+---
+import DocRef from './DocRef.astro';
+import type { RefTable } from '@/data/types';
+
+interface Props {
+  table: RefTable;
+}
+const { table } = Astro.props;
+---
+<figure class="my-5 overflow-hidden rounded-xl border border-line bg-panel/50">
+  <figcaption class="flex items-center justify-between gap-3 border-b border-line bg-panel2/60 px-4 py-2.5">
+    <span class="text-sm font-semibold text-ink">{table.title}</span>
+    <DocRef doc={table.doc} section={table.section} />
+  </figcaption>
+  <div class="overflow-x-auto">
+    <table class="w-full border-collapse text-sm">
+      <thead>
+        <tr class="text-left text-xs uppercase tracking-wide text-muted">
+          {table.cols.map((c) => <th class="border-b border-line px-4 py-2 font-semibold">{c}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {
+          table.rows.map((row, ri) => (
+            <tr
+              class:list={[
+                'border-b border-line/60 last:border-0',
+                ri === table.highlightRow ? 'bg-key/10' : 'hover:bg-panel2/40',
+              ]}
+            >
+              {row.map((cell, ci) => (
+                <td
+                  class:list={[
+                    'px-4 py-2 align-top',
+                    ci === 0 ? 'font-mono font-medium text-brand-bright' : 'text-ink/90',
+                  ]}
+                >
+                  {cell}
+                </td>
+              ))}
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  {
+    table.caption && (
+      <p class="border-t border-line bg-panel2/30 px-4 py-2 text-xs text-muted">{table.caption}</p>
+    )
+  }
+</figure>

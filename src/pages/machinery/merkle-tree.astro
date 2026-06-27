@@ -1,0 +1,72 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import MerkleTreeExplorer from '@/components/react/MerkleTreeExplorer.tsx';
+import ValueTable from '@/components/ui/ValueTable.astro';
+import Formula from '@/components/ui/Formula.astro';
+import Callout from '@/components/ui/Callout.astro';
+import DocRef from '@/components/ui/DocRef.astro';
+import { MID_TABLE } from '@/data/tables';
+---
+<BaseLayout
+  title="Merkle tree explorer"
+  description="Authenticating OSNMA public keys with a Merkle tree, on real test-vector data."
+>
+  <PageHeader
+    eyebrow="4 · Cryptographic machinery"
+    title="The Merkle tree"
+    lead="A single stored root authenticates any of sixteen public keys, using only a short path of sibling hashes carried on the signal."
+  />
+
+  <p>
+    OSNMA could ship a fresh certificate for every public key, but that is heavy
+    over a 40-bit channel. Instead it commits to all of its public keys at once
+    with a <strong>Merkle tree</strong> <DocRef doc="icd" section="6.2" />. The
+    receiver stores just the 256-bit root. To prove a key, the signal carries the
+    key plus four sibling hashes; the receiver climbs to the root and checks the
+    match.
+  </p>
+
+  <h2>How the tree is built</h2>
+  <p>Each public key becomes a leaf, hashed, then internal nodes hash their two children:</p>
+  <Formula tex="m_i = \text{NPKT} \,\|\, \text{NPKID} \,\|\, \text{NPK}" display />
+  <Formula tex="x_{0,i} = H(m_i), \qquad x_{j,i} = H\big(x_{j-1,2i} \,\|\, x_{j-1,2i+1}\big)" display />
+  <p>
+    With 16 leaves the tree is four levels deep, so any leaf is authenticated by
+    exactly four sibling nodes — the <em>intermediate tree nodes</em> (ITN) in the
+    DSM-PKR.
+  </p>
+
+  <h2>Verify a real key</h2>
+  <p>
+    The walkthrough below uses the actual <code>Merkle_tree_1</code> material from
+    the official test vectors: the real public key for leaf 0 and the real sibling
+    nodes. Step through the climb and watch the recomputed root land on the
+    published value.
+  </p>
+
+  <MerkleTreeExplorer client:visible />
+
+  <Callout type="tip">
+    <p>
+      The recomputation runs live in your browser with SHA-256. It reproduces the
+      official root bit-for-bit — the same success criterion a receiver uses to
+      accept a public key from a DSM-PKR.
+    </p>
+  </Callout>
+
+  <h2>Which siblings for which leaf</h2>
+  <p>
+    The DSM-PKR's <strong>MID</strong> field says which leaf is being delivered and,
+    implicitly, which four siblings travel with it <DocRef doc="icd" section="3.2.2.2" />.
+  </p>
+  <ValueTable table={MID_TABLE} />
+
+  <Callout type="note">
+    <p>
+      Because the tree commits to all keys in advance, key renewal does not need a
+      new out-of-band trust anchor: a new key simply arrives as another
+      authenticated leaf. The tree itself changes only on a multi-year horizon.
+    </p>
+  </Callout>
+</BaseLayout>

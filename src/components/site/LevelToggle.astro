@@ -1,0 +1,50 @@
+---
+/**
+ * Beginner / Engineer toggle. Sets `data-level` on <html>; CSS hides
+ * `.level-engineer` blocks in beginner mode. Persisted in localStorage and
+ * applied before paint (see the inline boot script in BaseLayout) to avoid a flash.
+ */
+---
+<div class="inline-flex items-center rounded-full border border-line bg-panel p-0.5 text-xs font-medium">
+  <button
+    type="button"
+    data-set-level="beginner"
+    class="level-btn rounded-full px-3 py-1 text-muted transition-colors"
+  >
+    Beginner
+  </button>
+  <button
+    type="button"
+    data-set-level="engineer"
+    class="level-btn rounded-full px-3 py-1 text-muted transition-colors"
+  >
+    Engineer
+  </button>
+</div>
+
+<script>
+  function syncButtons(level: string) {
+    document.querySelectorAll<HTMLButtonElement>('.level-btn').forEach((btn) => {
+      const active = btn.dataset.setLevel === level;
+      btn.classList.toggle('bg-brand', active);
+      btn.classList.toggle('text-white', active);
+      btn.classList.toggle('text-muted', !active);
+    });
+  }
+
+  function applyLevel(level: string) {
+    document.documentElement.dataset.level = level;
+    try {
+      localStorage.setItem('osnma-level', level);
+    } catch {
+      /* storage may be unavailable; ignore */
+    }
+    syncButtons(level);
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.level-btn').forEach((btn) => {
+    btn.addEventListener('click', () => applyLevel(btn.dataset.setLevel ?? 'engineer'));
+  });
+
+  syncButtons(document.documentElement.dataset.level ?? 'engineer');
+</script>

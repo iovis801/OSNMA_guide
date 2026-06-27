@@ -1,0 +1,33 @@
+---
+interface Props {
+  type?: 'note' | 'tip' | 'warning' | 'security';
+  title?: string;
+}
+const { type = 'note', title } = Astro.props;
+
+const styles = {
+  note: { border: 'border-brand/40', bg: 'bg-brand/5', label: 'text-brand-bright', icon: 'i' },
+  tip: { border: 'border-hash/40', bg: 'bg-hash/5', label: 'text-hash', icon: '+' },
+  warning: { border: 'border-warn/40', bg: 'bg-warn/5', label: 'text-warn', icon: '!' },
+  security: { border: 'border-bad/40', bg: 'bg-bad/5', label: 'text-bad', icon: '⚿' },
+} as const;
+
+const defaultTitles = {
+  note: 'Note',
+  tip: 'Tip',
+  warning: 'Watch out',
+  security: 'Security',
+} as const;
+
+const s = styles[type];
+const heading = title ?? defaultTitles[type];
+---
+<aside class:list={['my-4 rounded-lg border px-4 py-3', s.border, s.bg]}>
+  <p class:list={['mb-1 flex items-center gap-2 text-xs font-bold uppercase tracking-wide', s.label]}>
+    <span class="grid h-4 w-4 place-items-center rounded-full border border-current text-[10px]">{s.icon}</span>
+    {heading}
+  </p>
+  <div class="text-sm text-ink/90 [&_p]:mb-2 [&_p:last-child]:mb-0">
+    <slot />
+  </div>
+</aside>

@@ -1,0 +1,85 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import AnimatedChainPreview from '@/components/react/AnimatedChainPreview.tsx';
+import { NAV } from '@/data/nav';
+---
+<BaseLayout title="What is OSNMA?" withSidebar={false}>
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="mx-auto max-w-5xl px-4 py-16 sm:py-24">
+      <p class="mb-3 inline-flex items-center gap-2 rounded-full border border-line bg-panel px-3 py-1 text-xs font-medium text-muted">
+        <span class="h-1.5 w-1.5 rounded-full bg-ok"></span>
+        Galileo Open Service Navigation Message Authentication
+      </p>
+      <h1 class="max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
+        How Galileo proves its navigation data is
+        <span class="text-brand-bright">real</span>.
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg text-muted">
+        OSNMA lets any receiver verify that the Galileo navigation message it
+        receives was genuinely produced by Galileo and not by a spoofer. This is
+        an exhaustive, interactive walkthrough of how it works — from the
+        cryptographic first principles to the exact bits on the signal and the
+        step-by-step logic inside a receiver.
+      </p>
+
+      <div class="mt-10 rounded-xl border border-line bg-panel/50 p-4 sm:p-6">
+        <p class="mb-3 text-sm font-medium text-muted">The OSNMA chain of trust, at a glance:</p>
+        <AnimatedChainPreview client:visible />
+      </div>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a
+          href="/foundations/spoofing"
+          class="rounded-lg bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-brand-bright"
+        >
+          Start from the beginning →
+        </a>
+        <a
+          href="/receiver/startup"
+          class="rounded-lg border border-line bg-panel px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-brand"
+        >
+          Jump to: what a receiver does at start-up
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-5xl px-4 py-14">
+    <h2 class="mb-2 text-2xl font-bold">Explore the whole protocol</h2>
+    <p class="mb-8 max-w-2xl text-muted">
+      Every section pairs an intuitive explanation with the precise, bit-level
+      detail from the official documents. Use the
+      <strong class="text-ink">Beginner / Engineer</strong> switch in the header to
+      reveal or hide the deep-dive layers.
+    </p>
+
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        NAV.map((section) => (
+          <div class="flex flex-col rounded-xl border border-line bg-panel/50 p-5">
+            <h3 class="text-sm font-bold text-brand-bright">{section.title}</h3>
+            <p class="mt-1 mb-3 text-sm text-muted">{section.blurb}</p>
+            <ul class="mt-auto space-y-1.5">
+              {section.items.map((item) => (
+                <li>
+                  {item.ready ? (
+                    <a href={item.href} class="group flex items-baseline gap-1.5 text-sm text-ink hover:text-brand-bright">
+                      <span class="text-brand">›</span>
+                      <span class="group-hover:underline">{item.title}</span>
+                    </a>
+                  ) : (
+                    <span class="flex items-baseline gap-1.5 text-sm text-muted/50">
+                      <span>›</span>
+                      <span>{item.title}</span>
+                      <span class="text-[10px] uppercase tracking-wide">soon</span>
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

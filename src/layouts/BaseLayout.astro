@@ -1,0 +1,123 @@
+---
+import '@/styles/global.css';
+import Header from '@/components/site/Header.astro';
+import Sidebar from '@/components/site/Sidebar.astro';
+import Footer from '@/components/site/Footer.astro';
+import { READING_ORDER } from '@/data/nav';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Set false on the landing page to use a full-width hero layout. */
+  withSidebar?: boolean;
+}
+
+const { title, description = 'An exhaustive, interactive explainer of Galileo OSNMA.', withSidebar = true } = Astro.props;
+const currentPath = Astro.url.pathname;
+
+const idx = READING_ORDER.findIndex(
+  (i) => i.href === currentPath || i.href + '/' === currentPath || i.href === currentPath.replace(/\/$/, ''),
+);
+const prev = idx > 0 ? READING_ORDER[idx - 1] : null;
+const next = idx >= 0 && idx < READING_ORDER.length - 1 ? READING_ORDER[idx + 1] : null;
+---
+<!doctype html>
+<html lang="en" data-level="engineer">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <title>{title} · OSNMA Guide</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script is:inline>
+      // Apply saved reading level before paint to avoid a flash of the wrong layer.
+      try {
+        const lvl = localStorage.getItem('osnma-level');
+        if (lvl) document.documentElement.dataset.level = lvl;
+      } catch (e) {
+        /* ignore */
+      }
+    </script>
+  </head>
+  <body>
+    <Header />
+
+    {
+      withSidebar ? (
+        <div class="mx-auto flex max-w-[1400px] gap-8 px-4">
+          <aside
+            id="sidebar"
+            class="sidebar fixed inset-y-0 left-0 z-30 w-72 -translate-x-full overflow-y-auto border-r border-line bg-base px-4 pb-10 pt-20 transition-transform lg:sticky lg:top-14 lg:z-0 lg:h-[calc(100vh-3.5rem)] lg:translate-x-0 lg:border-r-0 lg:pt-6"
+          >
+            <Sidebar currentPath={currentPath} />
+          </aside>
+
+          <div
+            id="sidebar-backdrop"
+            class="fixed inset-0 z-20 hidden bg-black/60 lg:hidden"
+          />
+
+          <main class="min-w-0 flex-1 py-8">
+            <article class="prose-osnma max-w-3xl">
+              <slot />
+            </article>
+
+            {(prev || next) && (
+              <nav class="mt-12 grid max-w-3xl grid-cols-2 gap-3 border-t border-line pt-6">
+                <div>
+                  {prev && (
+                    <a
+                      href={prev.href}
+                      class="block rounded-lg border border-line bg-panel p-3 text-sm transition-colors hover:border-brand"
+                    >
+                      <span class="text-xs text-muted">← Previous</span>
+                      <span class="block font-medium text-ink">{prev.title}</span>
+                    </a>
+                  )}
+                </div>
+                <div class="text-right">
+                  {next && (
+                    <a
+                      href={next.href}
+                      class="block rounded-lg border border-line bg-panel p-3 text-sm transition-colors hover:border-brand"
+                    >
+                      <span class="text-xs text-muted">Next →</span>
+                      <span class="block font-medium text-ink">{next.title}</span>
+                    </a>
+                  )}
+                </div>
+              </nav>
+            )}
+
+            <div class="max-w-3xl">
+              <Footer />
+            </div>
+          </main>
+        </div>
+      ) : (
+        <main>
+          <slot />
+        </main>
+      )
+    }
+
+    <style>
+      body.sidebar-open .sidebar {
+        transform: translateX(0);
+      }
+      body.sidebar-open #sidebar-backdrop {
+        display: block;
+      }
+    </style>
+    <script>
+      document.getElementById('sidebar-backdrop')?.addEventListener('click', () => {
+        document.body.classList.remove('sidebar-open');
+      });
+    </script>
+  </body>
+</html>

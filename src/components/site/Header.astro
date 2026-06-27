@@ -1,0 +1,52 @@
+---
+import LevelToggle from './LevelToggle.astro';
+---
+<header
+  class="sticky top-0 z-40 border-b border-line bg-base/80 backdrop-blur supports-[backdrop-filter]:bg-base/60"
+>
+  <div class="mx-auto flex h-14 max-w-[1400px] items-center gap-3 px-4">
+    <button
+      type="button"
+      id="sidebar-toggle"
+      class="grid h-9 w-9 place-items-center rounded-md border border-line text-muted hover:text-ink lg:hidden"
+      aria-label="Toggle navigation"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+    </button>
+
+    <a href="/" class="flex items-center gap-2.5">
+      <span class="grid h-8 w-8 place-items-center rounded-lg bg-brand/15 text-brand-bright">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2a10 10 0 1 0 10 10"></path>
+          <path d="M12 6a6 6 0 1 0 6 6"></path>
+          <circle cx="12" cy="12" r="1.6" fill="currentColor"></circle>
+        </svg>
+      </span>
+      <span class="flex flex-col leading-none">
+        <span class="text-sm font-bold tracking-tight">OSNMA Guide</span>
+        <span class="text-[11px] text-muted">Galileo signal authentication, explained</span>
+      </span>
+    </a>
+
+    <div class="ml-auto flex items-center gap-3">
+      <LevelToggle />
+      <a
+        href="/reference/sources"
+        class="hidden text-sm text-muted hover:text-ink sm:inline"
+      >
+        Sources
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('sidebar-toggle');
+  toggle?.addEventListener('click', () => {
+    document.body.classList.toggle('sidebar-open');
+  });
+</script>

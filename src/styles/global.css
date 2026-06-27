@@ -1,0 +1,121 @@
+@import "tailwindcss";
+@import "katex/dist/katex.min.css";
+
+/*
+  OSNMA Guide design tokens.
+  Colours carry semantic meaning that is reused across diagrams so the
+  reader builds a consistent mental colour-map of the protocol:
+    brand  = Galileo / structural chrome
+    key    = TESLA chain keys (gold)
+    tag    = tags / MACs (cyan)
+    sig    = digital signatures (violet)
+    hash   = hashes / Merkle nodes (green)
+    ok/warn/bad = verification verdicts
+*/
+@theme {
+  --color-base: #0a0e17;
+  --color-panel: #121826;
+  --color-panel2: #1b2436;
+  --color-line: #2a3550;
+  --color-ink: #e6ebf5;
+  --color-muted: #9aa7c2;
+
+  --color-brand: #4f9cf9;
+  --color-brand-bright: #7ab6ff;
+
+  --color-key: #f5b13d;
+  --color-tag: #34d3ee;
+  --color-sig: #b07cff;
+  --color-hash: #57d99a;
+
+  --color-ok: #3ecf8e;
+  --color-warn: #f5b13d;
+  --color-bad: #f2607a;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", "Cascadia Code", monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
+body {
+  background-color: var(--color-base);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Subtle starfield gradient backdrop for the space/GNSS theme. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(79, 156, 249, 0.10), transparent 60%),
+    radial-gradient(900px 500px at 0% 0%, rgba(176, 124, 255, 0.08), transparent 55%);
+  pointer-events: none;
+}
+
+/* Long-form prose defaults for MDX/markdown content. */
+.prose-osnma {
+  line-height: 1.7;
+}
+.prose-osnma h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  scroll-margin-top: 5rem;
+}
+.prose-osnma h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.6rem;
+  color: var(--color-brand-bright);
+  scroll-margin-top: 5rem;
+}
+.prose-osnma p {
+  margin-bottom: 1rem;
+  color: var(--color-ink);
+}
+.prose-osnma a {
+  color: var(--color-brand-bright);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.prose-osnma ul {
+  list-style: disc;
+  padding-left: 1.4rem;
+  margin-bottom: 1rem;
+}
+.prose-osnma ol {
+  list-style: decimal;
+  padding-left: 1.4rem;
+  margin-bottom: 1rem;
+}
+.prose-osnma li {
+  margin-bottom: 0.35rem;
+}
+.prose-osnma code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--color-panel2);
+  border: 1px solid var(--color-line);
+  border-radius: 0.3rem;
+  padding: 0.1rem 0.35rem;
+}
+.prose-osnma strong {
+  color: #fff;
+  font-weight: 650;
+}
+
+/* Hide the "engineer-only" deep dives when the page is in Beginner mode. */
+[data-level="beginner"] .level-engineer {
+  display: none;
+}

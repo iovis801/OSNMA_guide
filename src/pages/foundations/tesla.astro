@@ -1,0 +1,85 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import Formula from '@/components/ui/Formula.astro';
+import Callout from '@/components/ui/Callout.astro';
+import DocRef from '@/components/ui/DocRef.astro';
+---
+<BaseLayout
+  title="TESLA: trust through delay"
+  description="How delayed key disclosure lets a public broadcast be authenticated with cheap symmetric MACs."
+>
+  <PageHeader
+    eyebrow="1 · Cryptographic foundations"
+    title="TESLA: trust through delay"
+    lead="The elegant trick at the heart of OSNMA: keep the key secret while it matters, then reveal it once it is too late to cheat."
+  />
+
+  <h2>The dilemma</h2>
+  <p>
+    Symmetric MACs are cheap, short and perfect for a low-rate broadcast — but they
+    need a shared secret, and sharing that secret with every receiver would let any
+    of them forge messages. Digital signatures avoid the shared secret but are too
+    heavy to attach to every data block. <strong>TESLA</strong> (Timed Efficient
+    Stream Loss-tolerant Authentication) resolves the conflict.
+  </p>
+
+  <h2>The key idea</h2>
+  <p>
+    The sender computes a MAC over each message with a key it keeps
+    <em>secret for now</em>, and broadcasts the tag immediately. A short time later
+    it <em>discloses that key</em>. A receiver therefore:
+  </p>
+  <ul>
+    <li>buffers the message and its tag when they arrive;</li>
+    <li>waits for the key to be disclosed in a later message;</li>
+    <li>checks the key belongs to the one-way chain (hash it back toward the trusted root);</li>
+    <li>recomputes the MAC over the buffered data and compares.</li>
+  </ul>
+  <p>
+    The security comes entirely from timing. When the tag was transmitted, the key
+    was still secret, so no attacker could have produced a valid tag for forged
+    data. By the time the key is public, the genuine data is already in the
+    receiver's buffer.
+  </p>
+
+  <Callout type="security" title="The one condition that makes it work">
+    <p>
+      The receiver must be sure a key was <em>not already public</em> when it
+      received the corresponding tag. That requires loose time synchronisation: the
+      receiver has to know roughly what time it is, so it can reject any key that
+      arrives suspiciously early.
+    </p>
+  </Callout>
+
+  <div class="level-engineer">
+    <h3>The numbers</h3>
+    <p>
+      OSNMA sets the time-synchronisation requirement to
+      <Formula tex="T_L = 30\,\text{s}" /> (one subframe). For normal tags the
+      receiver's clock uncertainty must be under 15 s; looser sync (up to 165 s)
+      still allows the slow MACs only <DocRef doc="rxg" section="2.1" />. The full
+      treatment — the inequalities, the GST sub-frame computation and the anti-replay
+      logic — is on the
+      <a href="/receiver/time-sync">time synchronisation gate</a> page.
+    </p>
+  </div>
+
+  <h2>Why it fits Galileo</h2>
+  <p>
+    OSNMA uses a <strong>single TESLA chain shared by all satellites</strong>. Every
+    satellite broadcasting OSNMA discloses the same key at the same epoch, which lets
+    one satellite's tags authenticate another satellite's data —
+    <em>cross-authentication</em> — and lets a receiver collect authentication faster
+    by listening to several satellites at once. A fresh key is disclosed every 30-second
+    subframe, carried in the MACK alongside the tags.
+  </p>
+
+  <p>
+    The chain itself — how keys are generated, disclosed in reverse, and verified
+    back to the root — comes alive in the interactive
+    <a href="/machinery/tesla-chain">TESLA key chain</a>. To see what anchors the
+    root key, read about the <a href="/structures/dsm-kroot">DSM-KROOT</a> and the
+    full <a href="/machinery/chain-of-trust">chain of trust</a>.
+  </p>
+</BaseLayout>

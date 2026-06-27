@@ -1,0 +1,61 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import TimeSyncGate from '@/components/react/TimeSyncGate.tsx';
+import Formula from '@/components/ui/Formula.astro';
+import Callout from '@/components/ui/Callout.astro';
+import DocRef from '@/components/ui/DocRef.astro';
+---
+<BaseLayout
+  title="Time synchronisation gate"
+  description="Why an OSNMA receiver must know the time before it can trust a tag."
+>
+  <PageHeader
+    eyebrow="5 · The receiver"
+    title="The time synchronisation gate"
+    lead="TESLA's security rests on one assumption: a key was still secret when its tag arrived. The receiver enforces that with a loose time check before any tag is trusted."
+  />
+
+  <p>
+    OSNMA authenticates data with a key that is only revealed later. That trick
+    works only if the receiver can be sure the key was <em>not already public</em>
+    at the moment it received the tag. A receiver whose clock runs far ahead of
+    real time could accept a key that is, in fact, already disclosed — and a
+    spoofer could exploit that to forge tags. The defence is a coarse but strict
+    time check.
+  </p>
+
+  <h2>The requirement</h2>
+  <p>
+    The time-synchronisation requirement is <Formula tex="T_L = 30\text{ s}" />, one
+    subframe <DocRef doc="rxg" section="2.1" />. For normal tags the receiver's
+    clock uncertainty <Formula tex="B" /> must satisfy:
+  </p>
+  <Formula tex="B < \tfrac{T_L}{2} = 15\text{ s}" display />
+  <p>
+    Slow MACs (ADKD = 12) carry an extra 10-subframe key delay, which buys more
+    tolerance:
+  </p>
+  <Formula tex="B < \tfrac{T_L + 300}{2} = 165\text{ s}" display />
+
+  <p>Move the slider to see which tags a receiver may use at a given uncertainty:</p>
+
+  <TimeSyncGate client:visible />
+
+  <h2>Where the time comes from</h2>
+  <p>
+    The receiver reads GST from the signal — I/NAV word type 0 or 5, or the
+    Secondary Synchronisation Pattern — and checks it against its own clock
+    <DocRef doc="rxg" section="5.3" />. It then derives the subframe time used in
+    every key and tag computation:
+  </p>
+  <Formula tex="GST_{SF} = GST_0 + 30 \cdot \left\lfloor \tfrac{GST_{SIS} - GST_0}{30} \right\rfloor" display />
+
+  <Callout type="security">
+    <p>
+      This is why a long-idle receiver must re-synchronise before authenticating:
+      its clock has drifted, and until the uncertainty is back under 15 s the TESLA
+      guarantee does not hold.
+    </p>
+  </Callout>
+</BaseLayout>

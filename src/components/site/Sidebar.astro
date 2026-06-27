@@ -1,0 +1,53 @@
+---
+import { NAV } from '@/data/nav';
+
+interface Props {
+  currentPath: string;
+}
+const { currentPath } = Astro.props;
+
+function isActive(href: string): boolean {
+  if (href === '/') return currentPath === '/';
+  return currentPath === href || currentPath === href + '/';
+}
+---
+<nav aria-label="Site sections" class="text-sm">
+  {
+    NAV.map((section) => (
+      <div class="mb-5">
+        <p class="mb-1.5 text-xs font-semibold uppercase tracking-wider text-muted">
+          {section.title}
+        </p>
+        <ul class="space-y-0.5 border-l border-line">
+          {section.items.map((item) => (
+            <li>
+              {item.ready ? (
+                <a
+                  href={item.href}
+                  class:list={[
+                    '-ml-px block border-l-2 py-1 pl-3 transition-colors',
+                    isActive(item.href)
+                      ? 'border-brand font-medium text-brand-bright'
+                      : 'border-transparent text-ink/80 hover:border-line hover:text-ink',
+                  ]}
+                >
+                  {item.title}
+                </a>
+              ) : (
+                <span
+                  class="-ml-px block cursor-not-allowed border-l-2 border-transparent py-1 pl-3 text-muted/50"
+                  title="Coming soon"
+                >
+                  {item.title}
+                  <span class="ml-1 align-middle text-[10px] uppercase tracking-wide text-muted/40">
+                    soon
+                  </span>
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</nav>

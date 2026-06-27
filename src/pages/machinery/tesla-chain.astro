@@ -1,0 +1,77 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import TeslaChain from '@/components/react/TeslaChain.tsx';
+import Formula from '@/components/ui/Formula.astro';
+import Callout from '@/components/ui/Callout.astro';
+import DocRef from '@/components/ui/DocRef.astro';
+---
+<BaseLayout
+  title="TESLA key chain"
+  description="How the OSNMA TESLA one-way key chain is generated, disclosed and verified."
+>
+  <PageHeader
+    eyebrow="4 · Cryptographic machinery"
+    title="The TESLA key chain"
+    lead="A pre-computed chain of keys, released one at a time in reverse, turns a cheap symmetric MAC into proof that only Galileo could have produced the data."
+  />
+
+  <p>
+    A TESLA chain is built backward from a secret. The provider picks a random
+    seed <Formula tex="K_N" />, then derives each earlier key from the next with a
+    one-way function <Formula tex="F" />, all the way down to the root
+    <Formula tex="K_0" /> <DocRef doc="icd" section="6.4" />:
+  </p>
+  <Formula tex="K_i = F(K_{i+1}) = \operatorname{trunc}\big(l_k,\ \operatorname{hash}(K_{i+1}\ \|\ GST_{SF,i}\ \|\ \alpha)\big)" display />
+  <p>
+    Because <Formula tex="F" /> is one-way, anyone can hash a disclosed key
+    <em>backward</em> toward the root, but nobody can run it <em>forward</em> to
+    predict the next, still-secret key. That asymmetry is the whole trick.
+  </p>
+
+  <h2>Generation, broadcast, verification</h2>
+  <p>
+    Keys are generated seed-to-root but <strong>broadcast root-first</strong>: the
+    root <Formula tex="K_0" /> is published and authenticated up front (in the
+    signed DSM-KROOT), then one key is disclosed per 30-second subframe. Walk a
+    received key back to the root below:
+  </p>
+
+  <TeslaChain client:visible />
+
+  <h2>Why delay equals authentication</h2>
+  <p>
+    Each tag in a subframe is a MAC computed with a key that is still secret at
+    that moment. The matching key is disclosed in a <em>later</em> subframe
+    <DocRef doc="rxg" section="5.5.4" />. A receiver buffers the data and its tag,
+    waits for the key, confirms the key belongs to the chain, then recomputes the
+    MAC. A forger, not knowing the key in advance, cannot fabricate a tag that will
+    later check out.
+  </p>
+
+  <Callout type="tip">
+    <p>
+      One chain serves the whole constellation. Every OSNMA satellite discloses the
+      same key at the same epoch, which is what lets one satellite's tags
+      authenticate another satellite's data — <em>cross-authentication</em>.
+    </p>
+  </Callout>
+
+  <Callout type="security">
+    <p>
+      The delay only protects you if the key really was secret when the tag
+      arrived. That is enforced by the loose time check on the
+      <a href="/receiver/time-sync">time synchronisation gate</a> page.
+    </p>
+  </Callout>
+
+  <div class="level-engineer">
+    <h3>The chain pattern α</h3>
+    <p>
+      The 48-bit pattern <Formula tex="\alpha" /> from the DSM-KROOT is mixed into
+      every derivation, and <Formula tex="GST_{SF}" /> binds each key to a specific
+      subframe in time. Together they make the chain unique and prevent a key from
+      a different time or chain being substituted.
+    </p>
+  </div>
+</BaseLayout>

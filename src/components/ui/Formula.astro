@@ -1,0 +1,23 @@
+---
+import katex from 'katex';
+
+interface Props {
+  tex: string;
+  display?: boolean;
+}
+const { tex, display = false } = Astro.props;
+
+// Render KaTeX at build time so no client-side JS is needed for formulas.
+const html = katex.renderToString(tex, {
+  displayMode: display,
+  throwOnError: false,
+  output: 'html',
+});
+---
+{
+  display ? (
+    <div class="my-4 overflow-x-auto rounded-lg border border-line bg-panel/60 px-4 py-3" set:html={html} />
+  ) : (
+    <span set:html={html} />
+  )
+}

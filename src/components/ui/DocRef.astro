@@ -1,0 +1,27 @@
+---
+/**
+ * Inline citation chip. `doc` selects which official reference; `section` is the
+ * clause number. Links to the Sources page so the provenance is always reachable.
+ */
+interface Props {
+  doc: 'icd' | 'rxg';
+  section: string;
+}
+const { doc, section } = Astro.props;
+const label = doc === 'icd' ? 'SIS ICD' : 'Rx Guidelines';
+const title =
+  doc === 'icd'
+    ? `Galileo OSNMA SIS ICD v1.1, section ${section}`
+    : `Galileo OSNMA Receiver Guidelines v1.3, section ${section}`;
+---
+<a
+  href="/reference/sources"
+  title={title}
+  class="ml-1 inline-flex items-center gap-1 rounded border border-line bg-panel2 px-1.5 py-0.5 align-middle text-[11px] font-medium text-muted no-underline transition-colors hover:border-brand hover:text-brand-bright"
+>
+  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+    <path d="M14 2v6h6"></path>
+  </svg>
+  {label} §{section}
+</a>

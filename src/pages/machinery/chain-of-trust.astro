@@ -1,0 +1,53 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import ChainOfTrust from '@/components/react/ChainOfTrust.tsx';
+import Callout from '@/components/ui/Callout.astro';
+---
+<BaseLayout
+  title="The chain of trust"
+  description="How OSNMA links a single out-of-band anchor all the way down to authenticated navigation data."
+>
+  <PageHeader
+    eyebrow="4 · Cryptographic machinery"
+    title="The chain of trust, end to end"
+    lead="Every OSNMA mechanism on this site is one link in a single chain. Each link is authenticated by the one above it — from a value you trust out-of-band down to the data in your position fix."
+  />
+
+  <p>
+    Pull the pieces together. The Merkle tree, the ECDSA signature, the TESLA chain
+    and the tags each solve one hand-off of trust. Stacked, they let a receiver
+    that trusts only one downloaded value end up trusting live navigation data from
+    every satellite in view.
+  </p>
+
+  <ChainOfTrust client:visible />
+
+  <h2>The single rule</h2>
+  <p>
+    Read top to bottom, the pattern never changes: <strong>nothing is trusted until
+    something already trusted vouches for it.</strong> The Merkle root vouches for
+    the public key; the public key's signature vouches for KROOT; KROOT vouches for
+    every TESLA key; each key vouches for its tags; and a matching tag vouches for
+    the navigation data.
+  </p>
+
+  <Callout type="security">
+    <p>
+      Break any link and the chain stops: an unverified public key cannot validate
+      a KROOT signature, and an unanchored key cannot validate a tag. That is why a
+      receiver rebuilds exactly the missing links at start-up — and no more. See
+      <a href="/receiver/startup">cold / warm / hot start</a>.
+    </p>
+  </Callout>
+
+  <Callout type="note">
+    <p>
+      The two ends differ in trust model on purpose: the top uses
+      <strong>asymmetric</strong> cryptography (Merkle hashing and ECDSA signatures),
+      which is robust but heavy, just rarely; the bottom uses cheap
+      <strong>symmetric</strong> MACs every second, made trustworthy by TESLA's
+      delayed disclosure.
+    </p>
+  </Callout>
+</BaseLayout>

@@ -1,0 +1,83 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import Callout from '@/components/ui/Callout.astro';
+---
+<BaseLayout
+  title="The spoofing problem"
+  description="Why open GNSS navigation data is forgeable, and what OSNMA does about it."
+>
+  <PageHeader
+    eyebrow="0 · Orientation"
+    title="The spoofing problem"
+    lead="A civil GNSS receiver believes whatever it decodes. OSNMA exists so it no longer has to."
+  />
+
+  <p>
+    The Galileo Open Service broadcasts its navigation message in the clear. Any
+    receiver can read the ephemeris, clock and timing data that let it compute a
+    position — and so can anyone with a signal generator. Because the open message
+    carries no built-in proof of origin, a receiver cannot, on its own, tell a
+    genuine Galileo message from a counterfeit one.
+  </p>
+
+  <h2>Spoofing, meaconing, replay</h2>
+  <p>
+    Several attacks exploit that blind trust:
+  </p>
+  <ul>
+    <li>
+      <strong>Spoofing</strong> — the attacker synthesises counterfeit signals with
+      forged navigation data to push the receiver to a false position or time.
+    </li>
+    <li>
+      <strong>Meaconing</strong> — the attacker receives the real signals and
+      re-broadcasts them, without necessarily decoding them, to mislead victims.
+    </li>
+    <li>
+      <strong>Replay</strong> — the attacker records authentic data and re-transmits
+      it later, so the bits are real but the timing is a lie.
+    </li>
+  </ul>
+  <p>
+    These are not exotic: software-defined radios make convincing spoofing
+    inexpensive, and the consequences — misdirected vehicles, falsified timestamps
+    in finance and power grids — are serious.
+  </p>
+
+  <h2>What OSNMA provides</h2>
+  <p>
+    OSNMA adds <strong>authentication of the navigation message</strong>: data-origin
+    authentication and integrity. A receiver that completes OSNMA verification knows
+    the navigation data genuinely originated from Galileo and was not altered in
+    flight. It achieves this by attaching short authentication tags (truncated MACs)
+    to the data and disclosing the keys to check them a little later — the
+    <a href="/foundations/tesla">TESLA</a> scheme.
+  </p>
+
+  <Callout type="security" title="What OSNMA is — and is not">
+    <p>
+      OSNMA authenticates the <em>navigation data message</em>. It does
+      <strong>not</strong> encrypt the signal (the data stays public), it does
+      <strong>not</strong> by itself authenticate the ranging code or defeat pure
+      signal-replay at the physical layer (that is the domain of separate, often
+      paid, services), and it is <strong>not</strong> instantaneous: because keys are
+      disclosed with delay, authentication always carries some latency.
+    </p>
+  </Callout>
+
+  <h2>The shape of the solution</h2>
+  <p>
+    Authenticating a public broadcast to millions of anonymous receivers is harder
+    than it sounds. Digital signatures would work but are heavy for a trickle-rate
+    data channel; symmetric MACs are light but seem to require sharing a secret with
+    everyone — which would let anyone forge. OSNMA threads this needle with a
+    delayed-disclosure key chain anchored by a signature and a Merkle tree. The rest
+    of this guide builds that solution from the ground up.
+  </p>
+
+  <p>
+    Next: the <a href="/foundations/crypto-primer">cryptographic toolkit</a> behind
+    it, then <a href="/foundations/tesla">how TESLA turns delay into trust</a>.
+  </p>
+</BaseLayout>

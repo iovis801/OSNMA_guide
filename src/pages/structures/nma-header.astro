@@ -1,0 +1,74 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import BitField from '@/components/react/BitField.tsx';
+import ValueTable from '@/components/ui/ValueTable.astro';
+import Callout from '@/components/ui/Callout.astro';
+import DocRef from '@/components/ui/DocRef.astro';
+import { NMA_HEADER } from '@/data/fields';
+import { NMAS_TABLE, CID_TABLE, CPKS_TABLE } from '@/data/tables';
+---
+<BaseLayout title="NMA Header" description="The 8-bit NMA Header: NMAS, CID and CPKS.">
+  <PageHeader
+    eyebrow="3 · Data structures"
+    title="The NMA Header"
+    lead="Eight bits, sent every 30 seconds, that tell a receiver whether to trust OSNMA right now and which keys are in force."
+  />
+
+  <p>
+    OSNMA data travels in two interleaved streams inside the 40-bit OSNMA field of
+    each Galileo E1-B page. The slow stream, <strong>HKROOT</strong>, carries one
+    byte per page. The very first byte of every 30-second subframe is the
+    <strong>NMA Header</strong> <DocRef doc="icd" section="3.1" />. It is small but
+    pivotal: every other OSNMA decision a receiver makes depends on it.
+  </p>
+
+  <h2>The layout</h2>
+  <p>Select a field to see what it means and the values it can take:</p>
+
+  <BitField spec={NMA_HEADER} client:visible />
+
+  <h2>NMAS — is the service usable at all?</h2>
+  <p>
+    The <strong>NMA Status</strong> is the master switch. In
+    <em>Operational</em> the service is provided to specification; in
+    <em>Test</em> it works but carries no guarantees; in <em>Don't use</em> the
+    receiver must not authenticate navigation data with the OSNMA information at all.
+  </p>
+  <ValueTable table={NMAS_TABLE} />
+
+  <Callout type="security">
+    <p>
+      "Don't use" is an authenticated instruction, not a glitch. A receiver that
+      sees it should immediately re-verify the TESLA root-key signature to confirm
+      the status and find out which lifecycle event is in progress.
+    </p>
+  </Callout>
+
+  <h2>CID — which chain?</h2>
+  <p>
+    The <strong>Chain ID</strong> identifies the TESLA key chain currently in
+    force. It increments (modulo 4) each time a new chain takes over, which lets a
+    receiver notice a chain change and line up the right root key.
+  </p>
+  <ValueTable table={CID_TABLE} />
+
+  <h2>CPKS — what is happening to the keys?</h2>
+  <p>
+    The <strong>Chain and Public Key Status</strong> announces lifecycle events:
+    chain renewal, chain revocation, public-key renewal or revocation, a new
+    Merkle tree, or an alert. Each value triggers a specific receiver procedure,
+    covered in
+    <a href="/lifecycle/events">Key &amp; lifecycle management</a>.
+  </p>
+  <ValueTable table={CPKS_TABLE} />
+
+  <Callout type="note">
+    <p>
+      Together, NMAS + CID + CPKS form a compact 7-bit state report (plus one
+      reserved bit). Because they are repeated every subframe and are covered by
+      the authenticated root-key signature, a receiver can rely on them even in
+      poor reception.
+    </p>
+  </Callout>
+</BaseLayout>

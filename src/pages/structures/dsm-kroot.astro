@@ -1,0 +1,131 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import BitField from '@/components/react/BitField.tsx';
+import ValueTable from '@/components/ui/ValueTable.astro';
+import Formula from '@/components/ui/Formula.astro';
+import Callout from '@/components/ui/Callout.astro';
+import DocRef from '@/components/ui/DocRef.astro';
+import { DSM_KROOT } from '@/data/fields';
+import { NB_DK_TABLE, HF_TABLE, MF_TABLE, KS_TABLE, TS_TABLE, ECDSA_TABLE } from '@/data/tables';
+---
+<BaseLayout
+  title="DSM-KROOT"
+  description="The DSM-KROOT: the digitally signed root key that anchors a TESLA chain."
+>
+  <PageHeader
+    eyebrow="3 · Data structures"
+    title="DSM-KROOT: the signed root key"
+    lead="The message that hands a receiver the root of a TESLA chain — and the ECDSA signature that proves the root is genuine."
+  />
+
+  <p>
+    A TESLA chain is only as trustworthy as its root key <strong>KROOT</strong>
+    (the public key <Formula tex="K_0" /> of the chain). The
+    <strong>DSM-KROOT</strong> is the Digital Signature Message that delivers
+    that root key together with an ECDSA signature over it
+    <DocRef doc="icd" section="3.2.3" />. A receiver verifies the signature with
+    an already-authenticated public key; once it does, the entire chain below
+    <Formula tex="K_0" /> — and every tag computed from it — becomes trustworthy.
+    This message is the hinge between the slow, signature-based world and the fast,
+    symmetric-key world of OSNMA.
+  </p>
+
+  <h2>The layout</h2>
+  <p>
+    The first 104 bits are a fixed header; the root key, the signature and padding
+    follow. Select any field to see what it carries:
+  </p>
+
+  <BitField spec={DSM_KROOT} client:visible />
+
+  <h2>Block count and identity</h2>
+  <p>
+    <strong>NB_DK</strong> states how many 104-bit blocks the whole DSM-KROOT
+    occupies, which fixes its total length. <strong>PKID</strong> names the public
+    key that must be used to check the signature, and <strong>CIDKR</strong> is the
+    Chain ID of the root being delivered — which can differ from the CID in the NMA
+    Header during a chain renewal, when the next chain is broadcast ahead of time.
+  </p>
+  <ValueTable table={NB_DK_TABLE} />
+
+  <h2>The cryptographic suite</h2>
+  <p>
+    Four small fields pin down exactly which algorithms and sizes the chain uses.
+    They are constant for the lifetime of a chain, so a receiver reads them once
+    and applies them to every later key and tag.
+  </p>
+  <ValueTable table={HF_TABLE} />
+  <ValueTable table={MF_TABLE} />
+  <ValueTable table={KS_TABLE} />
+  <ValueTable table={TS_TABLE} />
+  <p>
+    <strong>MACLT</strong> (8 bits) selects the fixed sequence of tag types
+    (ADKD values) that each MACK message will follow — see
+    <a href="/structures/mack">the MACK message</a> and
+    <a href="/structures/maclt">the MAC look-up table</a>.
+  </p>
+
+  <h2>Time of applicability</h2>
+  <p>
+    <strong>WN_K</strong> (week number) and <strong>TOWH_K</strong> (time of week,
+    in hours) give the moment the root key applies — together they define
+    <Formula tex="\mathrm{GST}_0" />, the chain's reference time. The root key is
+    the key immediately preceding the first chain key, nominally tied to the
+    subframe that starts at <Formula tex="\mathrm{GST}_0 - 30\,\text{s}" />. The
+    receiver needs this anchor to count how many one-way steps separate any later
+    key from the root.
+  </p>
+
+  <h2>The random pattern α, the root, the signature</h2>
+  <p>
+    <strong>α</strong> is a 48-bit unpredictable pattern that is mixed into every
+    key derivation in the chain, so the chain cannot be precomputed from
+    <Formula tex="K_0" /> alone. <strong>KROOT</strong> is the root key itself
+    (its length set by KS). <strong>DS</strong> is the ECDSA signature, and
+    <strong>P_DK</strong> pads the message out to a whole number of 104-bit blocks.
+  </p>
+  <ValueTable table={ECDSA_TABLE} />
+
+  <h2>What the signature actually covers</h2>
+  <p>
+    The signature is computed over a message <Formula tex="M" /> made of the header
+    fields plus the root key <DocRef doc="icd" section="6.3" />. Verifying it
+    therefore authenticates not just the key but the entire crypto suite and the
+    service status carried in the NMA Header.
+  </p>
+
+  <div class="level-engineer">
+    <Callout type="tip" title="The signed message M (field order)">
+      <p>
+        <Formula
+          tex="M = (\text{NMA Header} \,\|\, \text{CIDKR} \,\|\, \text{Res} \,\|\, \text{HF} \,\|\, \text{MF} \,\|\, \text{KS} \,\|\, \text{TS} \,\|\, \text{MACLT} \,\|\, \text{Res} \,\|\, \text{WN}_K \,\|\, \text{TOWH}_K \,\|\, \alpha \,\|\, \text{KROOT})"
+        />
+      </p>
+      <p>
+        That is everything from the header up to and including KROOT (104 header
+        bits + the key), with the signature DS computed over it and appended. The
+        NB_DK and PKID fields are not part of <Formula tex="M" />: they are
+        framing/identity, not signed content.
+      </p>
+    </Callout>
+  </div>
+
+  <h2>How it reaches the receiver</h2>
+  <p>
+    A DSM-KROOT does not arrive all at once. It is split into 104-bit blocks that
+    ride the slow HKROOT stream, one block per 30-second subframe, possibly from
+    several satellites. The receiver reassembles the blocks; if it cannot complete
+    the message within one hour, it discards the partial data and starts again
+    <DocRef doc="rxg" section="3.3" />.
+  </p>
+
+  <Callout type="note">
+    <p>
+      In the official EUSPA test vectors the suite is HF = 0 (SHA-256), MF = 0
+      (HMAC-SHA-256), KS = 4 (128-bit keys), TS = 9 (40-bit tags) and MACLT = 34.
+      Those are the concrete values used throughout the interactive demos on this
+      site.
+    </p>
+  </Callout>
+</BaseLayout>
