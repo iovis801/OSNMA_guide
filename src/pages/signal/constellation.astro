@@ -1,0 +1,67 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import ConstellationCrossAuth from '@/components/react/ConstellationCrossAuth.tsx';
+import Callout from '@/components/ui/Callout.astro';
+import Formula from '@/components/ui/Formula.astro';
+import DocRef from '@/components/ui/DocRef.astro';
+---
+<BaseLayout
+  title="Cross-authentication"
+  description="How a changing subset of Galileo satellites authenticates the whole constellation via self- and cross-authentication."
+>
+  <PageHeader
+    eyebrow="2 · OSNMA on the signal"
+    title="A moving constellation, cross-authenticated"
+    lead="Not every satellite transmits OSNMA, and the ones that do keep changing. Yet the whole constellation stays authenticated — thanks to self- and cross-authentication."
+  />
+
+  <p>
+    OSNMA is broadcast by a <strong>subset</strong> of the Galileo satellites, and
+    that subset is dynamic: a receiver cannot assume any particular satellite will
+    be carrying OSNMA at any moment. Because the TESLA chain and the DSMs are common
+    to the constellation, this is fine — but it raises a question: how do satellites
+    that are <em>not</em> transmitting OSNMA get authenticated?
+  </p>
+
+  <h2>Self vs cross authentication</h2>
+  <p>
+    The answer is in two fields of every tag: <strong>PRN_A</strong>, the satellite
+    transmitting the tag, and <strong>PRN_D</strong>, the satellite whose data the
+    tag authenticates <DocRef doc="icd" section="4.2.1" />.
+  </p>
+  <ul>
+    <li>
+      <strong>Self-authentication</strong> — when <Formula tex="\text{PRN}_A = \text{PRN}_D" />,
+      a satellite authenticates its own navigation data. Tag0 in every MACK is a
+      self-authentication tag.
+    </li>
+    <li>
+      <strong>Cross-authentication</strong> — when <Formula tex="\text{PRN}_A \neq \text{PRN}_D" />,
+      a transmitting satellite authenticates <em>another</em> satellite's data, even
+      if that other satellite carries no OSNMA at all.
+    </li>
+  </ul>
+
+  <p>Step through a few epochs and watch the transmitting set change while coverage stays complete:</p>
+
+  <ConstellationCrossAuth client:visible />
+
+  <Callout type="tip">
+    <p>
+      Cross-authentication is what makes a partial, shifting OSNMA deployment work.
+      A handful of transmitting satellites can vouch for the data of many more, so a
+      receiver authenticates every satellite it uses for a fix — not only the ones
+      currently sending OSNMA.
+    </p>
+  </Callout>
+
+  <Callout type="note">
+    <p>
+      The fixed sequence of which tag slots are self- vs cross-authentication, and
+      for which satellites, is governed by the
+      <a href="/structures/maclt">MAC look-up table</a>. The "S" and "E" markers in
+      those sequences are exactly self- and cross-authentication.
+    </p>
+  </Callout>
+</BaseLayout>

@@ -1,0 +1,94 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import FirstFixTimeline from '@/components/react/FirstFixTimeline.tsx';
+import DsmReassembly from '@/components/react/DsmReassembly.tsx';
+import Callout from '@/components/ui/Callout.astro';
+import DocRef from '@/components/ui/DocRef.astro';
+import { INAV_WORDS } from '@/data/inav-words';
+---
+<BaseLayout
+  title="From signal to first authenticated fix"
+  description="How a receiver collects I/NAV words and OSNMA material to reach a first authenticated position fix."
+>
+  <PageHeader
+    eyebrow="5 · The receiver"
+    title="From signal to first authenticated fix"
+    lead="A position fix needs navigation data; an authenticated fix needs that data plus the OSNMA tag and the key that signs it — and the key arrives later. Here is the whole journey."
+  />
+
+  <p>
+    The Galileo navigation message is not one packet but a stream of
+    <strong>word types</strong>, each carrying a piece of what a receiver needs.
+    A 30-second subframe is 15 pages, and those pages carry the words in sequence.
+    To compute a position for one satellite, the receiver must collect its
+    ephemeris, clock and health — word types 1 to 5 — plus time.
+  </p>
+
+  <h2>The words a fix needs</h2>
+  <div class="not-prose my-5 overflow-x-auto rounded-xl border border-line bg-panel/50">
+    <table class="w-full border-collapse text-sm">
+      <thead>
+        <tr class="text-left text-xs uppercase tracking-wide text-muted">
+          <th class="border-b border-line px-3 py-2">Word</th>
+          <th class="border-b border-line px-3 py-2">Carries</th>
+          <th class="border-b border-line px-3 py-2">For fix?</th>
+          <th class="border-b border-line px-3 py-2">OSNMA</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          INAV_WORDS.map((w) => (
+            <tr class="border-b border-line/60 last:border-0">
+              <td class="px-3 py-2 font-mono font-medium text-brand-bright">{w.wt}</td>
+              <td class="px-3 py-2 text-ink/90">{w.carries}</td>
+              <td class="px-3 py-2">{w.neededForFix ? <span class="text-ok">required</span> : <span class="text-muted">—</span>}</td>
+              <td class="px-3 py-2">{w.adkd !== undefined ? <span class="font-mono text-tag">ADKD {w.adkd}</span> : <span class="text-muted">—</span>}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+  <p>
+    OSNMA tags of type <strong>ADKD = 0</strong> authenticate word types 1-5 — exactly
+    the ephemeris and clock a fix relies on <DocRef doc="icd" section="4.2.1.3" />.
+  </p>
+
+  <h2>Power-on to authenticated fix</h2>
+  <p>
+    Play the journey. Notice the gap between the plain fix (TTFF) and the
+    authenticated fix (TTFAF): it exists because the key that validates the tags is
+    only disclosed in the following subframe.
+  </p>
+
+  <FirstFixTimeline client:visible />
+
+  <Callout type="note">
+    <p>
+      A receiver can output a position at TTFF and then <em>upgrade</em> it to
+      "authenticated" a little later, once the key arrives and the tags check out.
+      Many receivers flag each fix with its authentication state.
+    </p>
+  </Callout>
+
+  <h2>Reassembling a DSM from many satellites</h2>
+  <p>
+    Before any of this, the receiver needs the signed KROOT — and that arrives in
+    pieces. A DSM-KROOT is split into blocks carried one per subframe in the slow
+    HKROOT stream. Because OSNMA data is common to the whole constellation, those
+    blocks can come from <strong>different satellites</strong>, out of order and with
+    duplicates. The receiver just collects them until the message is complete
+    <DocRef doc="rxg" section="3.3" />:
+  </p>
+
+  <DsmReassembly client:visible />
+
+  <Callout type="tip">
+    <p>
+      This redundancy is a feature: the receiver does not depend on any single
+      satellite staying in view. It gathers whatever OSNMA blocks it can hear and
+      reassembles the same DSM from the constellation.
+    </p>
+  </Callout>
+</BaseLayout>

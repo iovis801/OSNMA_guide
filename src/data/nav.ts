@@ -43,7 +43,8 @@ export const NAV: NavSection[] = [
     blurb: 'Where the authentication bits live in the Galileo message.',
     items: [
       { title: 'E1-B page, HKROOT & MACK', href: '/signal/structure', blurb: 'The 40-bit OSNMA field and the 30 s subframe.', ready: true},
-      { title: 'Galileo System Time (GST)', href: '/signal/gst', blurb: 'WN, TOW and the subframe clock.', ready: true},
+      { title: 'Galileo System Time (GST)', href: '/signal/gst', blurb: 'WN, TOW and the subframe clock.', ready: true },
+      { title: 'Cross-authentication', href: '/signal/constellation', blurb: 'A moving OSNMA subset; self- and cross-auth.', ready: true },
     ],
   },
   {
@@ -73,6 +74,7 @@ export const NAV: NavSection[] = [
     title: '5 · The receiver',
     blurb: 'What a receiver does when it wakes up.',
     items: [
+      { title: 'Signal to first fix', href: '/receiver/first-fix', blurb: 'Words, packets and the path to an authenticated fix.', ready: true },
       { title: 'Cold / warm / hot start', href: '/receiver/startup', blurb: 'Powering on after a variable time off.', ready: true },
       { title: 'Time synchronisation gate', href: '/receiver/time-sync', blurb: 'The security check before any tag is trusted.', ready: true },
     ],
