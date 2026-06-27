@@ -39,7 +39,7 @@ const slug = (s: string) =>
       <section>
         <h2 id={slug(group.title)}>{group.title}</h2>
         {group.tables.map((t) => (
-          <ValueTable table={t} />
+          <ValueTable table={t} always />
         ))}
       </section>
     ))

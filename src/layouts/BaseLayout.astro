@@ -63,6 +63,13 @@ const next = idx >= 0 && idx < READING_ORDER.length - 1 ? READING_ORDER[idx + 1]
           />
 
           <main class="min-w-0 flex-1 py-8">
+            <div
+              class="level-beginner mb-6 max-w-3xl rounded-lg border border-brand/30 bg-brand/5 px-4 py-2.5 text-sm text-muted"
+            >
+              <strong class="font-semibold text-brand-bright">Beginner mode.</strong>
+              Formulas, value tables and deep dives are hidden for a lighter read. Switch to
+              <strong class="font-semibold text-ink">Engineer</strong> in the header for the full bit-level detail.
+            </div>
             <article class="prose-osnma max-w-3xl">
               <slot />
             </article>

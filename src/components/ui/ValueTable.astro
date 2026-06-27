@@ -4,10 +4,17 @@ import type { RefTable } from '@/data/types';
 
 interface Props {
   table: RefTable;
+  /** Set true to keep the table visible in Beginner mode (e.g. the reference page). */
+  always?: boolean;
 }
-const { table } = Astro.props;
+const { table, always = false } = Astro.props;
 ---
-<figure class="my-5 overflow-hidden rounded-xl border border-line bg-panel/50">
+<figure
+  class:list={[
+    !always && 'level-engineer',
+    'my-5 overflow-hidden rounded-xl border border-line bg-panel/50',
+  ]}
+>
   <figcaption class="flex items-center justify-between gap-3 border-b border-line bg-panel2/60 px-4 py-2.5">
     <span class="text-sm font-semibold text-ink">{table.title}</span>
     <DocRef doc={table.doc} section={table.section} />

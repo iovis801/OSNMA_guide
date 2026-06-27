@@ -16,7 +16,10 @@ const html = katex.renderToString(tex, {
 ---
 {
   display ? (
-    <div class="my-4 overflow-x-auto rounded-lg border border-line bg-panel/60 px-4 py-3" set:html={html} />
+    <div
+      class="level-engineer my-4 overflow-x-auto rounded-lg border border-line bg-panel/60 px-4 py-3"
+      set:html={html}
+    />
   ) : (
     <span set:html={html} />
   )

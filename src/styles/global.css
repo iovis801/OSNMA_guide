@@ -115,7 +115,16 @@ body::before {
   font-weight: 650;
 }
 
-/* Hide the "engineer-only" deep dives when the page is in Beginner mode. */
+/* Hide the "engineer-only" deep dives (formulas, value tables, bit-level asides)
+   when the page is in Beginner mode. */
 [data-level="beginner"] .level-engineer {
   display: none;
+}
+
+/* Beginner-only content, e.g. the mode banner. Hidden by default (engineer). */
+.level-beginner {
+  display: none;
+}
+[data-level="beginner"] .level-beginner {
+  display: block;
 }
