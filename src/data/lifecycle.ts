@@ -219,7 +219,10 @@ export const LIFECYCLE_EVENTS: LifecycleEvent[] = [
         label: 'Recovery',
         testVector: 'oam_step2',
         nmas: "Don't use",
-        actions: ['Connect to the GSC OSNMA server for recovery instructions and fresh material.'],
+        actions: [
+          'By this step OSNMA transmission has stopped entirely (no NMA status is broadcast).',
+          'Connect to the GSC OSNMA server for recovery instructions and fresh material.',
+        ],
       },
     ],
   },

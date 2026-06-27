@@ -19,10 +19,12 @@ import DocRef from '@/components/ui/DocRef.astro';
   <p>
     OSNMA authenticates data with a key that is only revealed later. That trick
     works only if the receiver can be sure the key was <em>not already public</em>
-    at the moment it received the tag. A receiver whose clock runs far ahead of
-    real time could accept a key that is, in fact, already disclosed — and a
-    spoofer could exploit that to forge tags. The defence is a coarse but strict
-    time check.
+    at the moment it received the tag. A receiver whose clock <em>lags</em> real
+    time — believing it is earlier than it really is — could accept a key that has,
+    in fact, already been disclosed, still treating it as secret; a spoofer who
+    already knows that key could exploit this to forge tags. (A clock running ahead
+    is merely over-cautious: it rejects valid keys, hurting availability, not
+    security.) The defence is a coarse but strict time check.
   </p>
 
   <h2>The requirement</h2>

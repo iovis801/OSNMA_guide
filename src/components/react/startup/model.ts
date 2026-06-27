@@ -106,7 +106,7 @@ export function computeStartup(scenario: Scenario, elapsedSeconds: number): Star
           detail:
             'The stored root is older than the tree-renewal horizon. Download the new Merkle root out-of-band from the GSC OSNMA server and re-verify it via its PKI certificate chain.',
           doc: 'rxg',
-          section: '5.1',
+          section: '3.1',
         }
       : {
           id: 'merkle',
@@ -115,7 +115,7 @@ export function computeStartup(scenario: Scenario, elapsedSeconds: number): Star
           detail:
             'The Merkle root held in non-volatile memory is still valid — trees are renewed only on a multi-year horizon — so it is reused directly as the anchor of trust.',
           doc: 'rxg',
-          section: '5.1',
+          section: '3.1',
         },
   );
 

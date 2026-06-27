@@ -22,7 +22,8 @@ import { NB_DK_TABLE, HF_TABLE, MF_TABLE, KS_TABLE, TS_TABLE, ECDSA_TABLE } from
 
   <p>
     A TESLA chain is only as trustworthy as its root key <strong>KROOT</strong>
-    (the public key <Formula tex="K_0" /> of the chain). The
+    (the publicly-known root <Formula tex="K_0" /> of the chain — a symmetric TESLA
+    key, not an ECDSA public key). The
     <strong>DSM-KROOT</strong> is the Digital Signature Message that delivers
     that root key together with an ECDSA signature over it
     <DocRef doc="icd" section="3.2.3" />. A receiver verifies the signature with
@@ -80,9 +81,9 @@ import { NB_DK_TABLE, HF_TABLE, MF_TABLE, KS_TABLE, TS_TABLE, ECDSA_TABLE } from
 
   <h2>The random pattern α, the root, the signature</h2>
   <p>
-    <strong>α</strong> is a 48-bit unpredictable pattern that is mixed into every
-    key derivation in the chain, so the chain cannot be precomputed from
-    <Formula tex="K_0" /> alone. <strong>KROOT</strong> is the root key itself
+    <strong>α</strong> is a 48-bit unpredictable pattern mixed into every key
+    derivation, so each chain is unique and cannot be precomputed in advance.
+    <strong>KROOT</strong> is the root key itself
     (its length set by KS). <strong>DS</strong> is the ECDSA signature, and
     <strong>P_DK</strong> pads the message out to a whole number of 104-bit blocks.
   </p>

@@ -16,7 +16,8 @@ export default function GstClock() {
   const subIndex = Math.floor(t / SUB);
   const gstSfOffset = subIndex * SUB;
   const tow = TOW0 + gstSfOffset;
-  const keyIndex = subIndex; // I = (GST_SF - GST_0)/30, with GST_0 at offset 0 here
+  // I = (GST_SF - GST_0)/30 + 1 (SIS ICD 6.4). KROOT K0 sits at GST_0 - 30, so GST_0 carries K1.
+  const keyIndex = subIndex + 1;
 
   const pct = (v: number) => `${(v / WINDOW) * 100}%`;
 
@@ -43,7 +44,7 @@ export default function GstClock() {
             }}
           >
             <span className="absolute inset-x-0 top-1.5 text-center font-mono text-[10px] text-muted">
-              K{i}
+              K{i + 1}
             </span>
           </div>
         ))}
@@ -71,7 +72,8 @@ export default function GstClock() {
 
       <p className="mt-3 text-xs text-muted">
         Any instant inside a 30 s window maps to the same GST_SF — the start of that subframe — and so to the same key
-        index. That shared, quantised time is what lets every receiver agree on which key verifies which tag.
+        index. That shared, quantised time is what lets every receiver agree on which key verifies which tag. The root
+        key K0 (KROOT) sits one subframe before GST_0, so GST_0 itself carries K1.
         <span className="ml-1 inline-block align-middle"><Cite doc="rxg" section="5.3" /></span>
       </p>
     </div>

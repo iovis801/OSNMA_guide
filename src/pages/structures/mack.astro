@@ -17,7 +17,7 @@ import { ADKD_TABLE, COP_TABLE, PRN_D_TABLE } from '@/data/tables';
   <PageHeader
     eyebrow="3 · Data structures"
     title="The MACK message"
-    lead="The fast OSNMA stream: 480 bits per subframe carrying the tags that authenticate the previous subframe's data, followed by the key that unlocks them."
+    lead="The fast OSNMA stream: 480 bits per subframe carrying truncated-MAC tags and the delayed TESLA key — the key that verifies the previous subframe's tags."
   />
 
   <p>
@@ -47,7 +47,7 @@ import { ADKD_TABLE, COP_TABLE, PRN_D_TABLE } from '@/data/tables';
     <Formula tex="l_K" />:
   </p>
   <Formula tex="n_t = \left\lfloor \frac{480 - l_K}{l_t + 16} \right\rfloor" display />
-  <p>With the test-vector configuration (l_K = 128, l_t = 40) that leaves room for six tags.</p>
+  <p>With the test-vector configuration (l_K = 128, l_t = 40) that leaves room for six tags in total — Tag0 plus five more.</p>
 
   <h2>Tag-Info: what each tag is about</h2>
   <p>Every tag after Tag0 comes with 16 bits describing what it authenticates:</p>
@@ -66,7 +66,7 @@ import { ADKD_TABLE, COP_TABLE, PRN_D_TABLE } from '@/data/tables';
     another's data — <em>cross-authentication</em>, which lets a receiver
     authenticate a satellite it can barely hear. Tag0 omits PRN_D entirely: it
     always authenticates the transmitting satellite's own data
-    (<em>self-authentication</em>) <DocRef doc="icd" section="4.2.1" />.
+    (<em>self-authentication</em>) <DocRef doc="icd" section="4.1.1" />.
   </p>
 
   <Callout type="security">

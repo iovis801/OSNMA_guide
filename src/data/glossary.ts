@@ -21,7 +21,7 @@ export const GLOSSARY: GlossaryEntry[] = [
   { term: 'EUSPA', full: 'European Union Agency for the Space Programme', def: 'The agency that operates Galileo and publishes the OSNMA documents.' },
   { term: 'GSC', full: 'European GNSS Service Centre', def: 'The interface to Galileo users; distributes the Merkle root and public keys out-of-band.' },
   { term: 'GST', full: 'Galileo System Time', def: 'The system timescale, expressed as a week number (WN) and time of week (TOW); the input that binds keys and tags to a moment in time.' },
-  { term: 'HF', full: 'Hash Function', def: 'DSM-KROOT field selecting SHA-256 or SHA3-256 for the chain and tree.' },
+  { term: 'HF', full: 'Hash Function', def: 'DSM-KROOT field selecting the hash for the TESLA chain (SHA-256, or SHA3-256). The Merkle tree currently uses SHA-256, conveyed with its root by the GSC.' },
   { term: 'HKROOT', full: 'Header and Root key', def: 'The slow OSNMA sub-message: 8 bits per page, 120 bits per subframe, carrying the NMA Header, DSM Header and DSM blocks.' },
   { term: 'HMAC', full: 'Hash-based Message Authentication Code', def: 'A MAC built from a hash; OSNMA’s default MAC function is HMAC-SHA-256.' },
   { term: 'I/NAV', full: 'Integrity Navigation message', def: 'The Galileo navigation message on E1-B (and E5b) that OSNMA authenticates.' },

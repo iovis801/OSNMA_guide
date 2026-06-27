@@ -48,7 +48,7 @@ const PHASES: Phase[] = [
     id: 'tags',
     title: 'Buffer the OSNMA tags',
     detail:
-      'The MACK of the same subframe carries tags (ADKD = 0) over word types 1-5. The receiver buffers the data and its tags.',
+      'The ADKD = 0 tags covering the words you just buffered arrive in the NEXT subframe (N+1), not the one that carried the data. The receiver holds the data and waits a subframe for its tags.',
     doc: 'icd',
     section: '4.2',
   },
@@ -56,7 +56,7 @@ const PHASES: Phase[] = [
     id: 'key',
     title: 'Receive & verify the key',
     detail:
-      'The key that produced those tags is disclosed only in the NEXT subframe (+30 s). The receiver hashes it back to the chain to confirm it is genuine.',
+      'The TESLA key that produced those tags is disclosed one subframe later still (N+2). The receiver hashes it back to the chain to confirm it is genuine.',
     doc: 'rxg',
     section: '5.4',
   },
@@ -72,7 +72,7 @@ const PHASES: Phase[] = [
     id: 'authfix',
     title: 'First authenticated fix (TTFAF)',
     detail:
-      'The position is now backed by authenticated data. The gap after TTFF is the price of delayed key disclosure — typically at least one extra subframe.',
+      'The position is now backed by authenticated data. The gap after TTFF is the price of delayed key disclosure — the tags arrive a subframe after the data, and the verifying key a subframe after that.',
     doc: 'rxg',
     section: '4.1',
     marker: 'ttfaf',

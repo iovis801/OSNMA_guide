@@ -44,11 +44,11 @@ import Callout from '@/components/ui/Callout.astro';
 
   <Callout type="note">
     <p>
-      The two ends differ in trust model on purpose: the top uses
-      <strong>asymmetric</strong> cryptography (Merkle hashing and ECDSA signatures),
-      which is robust but heavy, just rarely; the bottom uses cheap
-      <strong>symmetric</strong> MACs every second, made trustworthy by TESLA's
-      delayed disclosure.
+      The two ends differ in trust model on purpose: the top is anchored by a
+      trusted root and <strong>digital signatures</strong> — hash-based Merkle
+      verification plus ECDSA — robust but heavy, so used only rarely; the bottom
+      uses cheap <strong>symmetric</strong> MACs every subframe, made trustworthy by
+      TESLA's delayed disclosure.
     </p>
   </Callout>
 </BaseLayout>

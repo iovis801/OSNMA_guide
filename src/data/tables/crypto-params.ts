@@ -14,7 +14,7 @@ export const HF_TABLE: RefTable = {
   doc: 'icd',
   section: '3.2.3.4',
   highlightRow: 0,
-  caption: '2-bit field selecting the hash used for the TESLA chain and Merkle tree.',
+  caption: '2-bit field selecting the hash function for the TESLA chain. (The Merkle tree currently uses SHA-256, conveyed with its root.)',
 };
 
 /** MF — MAC Function (SIS ICD 3.2.3.5). */
