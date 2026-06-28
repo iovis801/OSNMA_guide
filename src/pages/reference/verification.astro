@@ -1,0 +1,74 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import PageHeader from '@/components/ui/PageHeader.astro';
+import Callout from '@/components/ui/Callout.astro';
+---
+<BaseLayout
+  title="How this site is verified"
+  description="The evidence behind the site's accuracy: reference-implementation cross-checks, the official test vectors, and deterministic tests."
+>
+  <PageHeader
+    eyebrow="7 · Reference"
+    title="How this site is verified"
+    lead="An explainer is only as good as its accuracy. This site's facts are checked against independent, mechanical evidence — not just careful reading."
+  />
+
+  <p>
+    Reviewing prose against a specification can miss errors and invent false ones. So the technical
+    content here is held to evidence that does not depend on anyone's judgement: a working reference
+    receiver, the official test vectors, and deterministic tests.
+  </p>
+
+  <h2>Four pillars</h2>
+  <ul>
+    <li>
+      <strong>The official PDF is the authority.</strong> The Galileo OSNMA SIS ICD v1.1 and Receiver
+      Guidelines v1.3 are the supreme reference — above any conversion or third-party code. Contested
+      values were read directly from the official tables.
+    </li>
+    <li>
+      <strong>Cross-checked against a reference implementation.</strong> Every value table and field
+      layout was compared against <strong>OSNMAlib</strong>, the peer-reviewed KU Leuven OSNMA
+      receiver. Every difference turned out to be a permissive OSNMAlib superset; the PDF confirmed
+      this site.
+    </li>
+    <li>
+      <strong>Proven on the official test vectors.</strong> OSNMAlib was run on the EUSPA test
+      vectors and reproduced <strong>all 19 scenarios exactly</strong> — independently confirming the
+      field values, the cryptography, and the lifecycle status transitions described here (including
+      every EOC / CREV / NPK / PKREV / NMT / OAM step).
+    </li>
+    <li>
+      <strong>Deterministic tests + a traceable ledger.</strong> A test suite enforces the bit-field
+      sums, the value-table arithmetic, and — crucially — that <strong>every section this site cites
+      actually exists in the official documents</strong>. A claims ledger backs each load-bearing
+      statement with a verbatim quote.
+    </li>
+  </ul>
+
+  <h2>The live demos use real data</h2>
+  <p>
+    The Merkle Tree Explorer recomputes the root from the genuine EUSPA test-vector key and matches the
+    published root bit-for-bit; the same cryptographic helpers are checked against that real value in
+    the test suite. Where conceptual clarity is better served by clean examples (the TESLA timeline,
+    the chain-of-trust overview) the site says so.
+  </p>
+
+  <Callout type="security" title="An honest ceiling">
+    <p>
+      No automated process — and no language model — can <em>guarantee</em> zero error. What this
+      programme guarantees is that mistakes are <strong>caught</strong>: a claim that isn't backed by a
+      test, the reference implementation, or a real document quote doesn't survive. A short list of
+      deliberate simplifications and the two items reserved for human-expert sign-off is kept in the
+      project's verification notes.
+    </p>
+  </Callout>
+
+  <Callout type="note">
+    <p>
+      The verification artefacts (the reference cross-check, the test-vector run, the claims ledger and
+      the scope notes) live in <code>docs/verification/</code> in the project repository, alongside a
+      script that reproduces the 19/19 reference-implementation run.
+    </p>
+  </Callout>
+</BaseLayout>

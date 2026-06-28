@@ -95,6 +95,7 @@ export const NAV: NavSection[] = [
       { title: 'Parameter reference', href: '/reference/parameters', blurb: 'All the value tables in one place.', ready: true},
       { title: 'Glossary', href: '/reference/glossary', blurb: 'Every acronym, defined.', ready: true},
       { title: 'Sources', href: '/reference/sources', blurb: 'The official documents this site cites.', ready: true },
+      { title: 'How this site is verified', href: '/reference/verification', blurb: 'The evidence behind the accuracy.', ready: true },
     ],
   },
 ];

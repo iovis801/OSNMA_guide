@@ -76,6 +76,24 @@ flagships built, on GitHub at `https://github.com/iovis801/OSNMA_guide` (branch
 `main`). Conventional commits; commit/push only when asked. The local repo git
 identity is set per-repo (iovis801 / loki.startup@gmail.com); `gh` is authed.
 
+## Verification (how correctness is established)
+
+Correctness is held to mechanical, non-judgmental evidence — see `docs/verification/`:
+- **Reference cross-check** against OSNMAlib (KU Leuven receiver at `C:\Personal\OSNMA_test_vector\osnmalib`)
+  — `osnmalib-crosscheck.md`. All site↔OSNMAlib diffs were benign OSNMAlib supersets; the official PDF
+  confirmed the site.
+- **End-to-end oracle**: OSNMAlib reproduces all **19/19** official EUSPA test-vector scenarios —
+  `osnmalib-run.md`; rerun with `scripts/verify/run_osnmalib.py` (needs the Python venv + OSNMAlib deps).
+- **Deterministic tests** (`npm run test`, 33): `src/data/invariants.test.ts` (bit-sums, table
+  arithmetic), `src/data/citations.test.ts` (every cited section must exist in the real docs + link
+  integrity), `src/data/crypto/crypto.test.ts` (real Merkle root + TESLA GST binding). Shared numbers
+  live in `src/data/constants.ts` (single source of truth).
+- **Traceable ledger**: `claims-ledger.md` (every claim → authority + verbatim quote);
+  `known-simplifications.md` (scope + the 2 items flagged for human-SME sign-off). Reader-facing summary
+  at `/reference/verification`.
+- The official PDFs are the supreme authority. The TS 0–4 / HF=1 / NB_DP=5 values OSNMAlib carries are
+  v1.1-Reserved (confirmed against the PDF) — do not "correct" the site to match OSNMAlib on these.
+
 ## Backlog / TODO
 
 - **Live raw I/NAV decoding (deferred — low priority).** Decode the raw 432000-bit
